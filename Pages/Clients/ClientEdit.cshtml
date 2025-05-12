@@ -1,0 +1,96 @@
+﻿@page "{id}"
+@model FreedomITAS.Pages.Clients.ClientEditModel
+@{
+    ViewData["Title"] = "Edit Client";
+}
+
+<h2>Edit Client</h2>
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Client.CompanyName" class="form-label"></label>
+        <input asp-for="Client.CompanyName" class="form-control" />
+        <span asp-validation-for="Client.CompanyName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.NumberStreet" class="form-label"></label>
+        <input asp-for="Client.NumberStreet" class="form-control" />
+        <span asp-validation-for="Client.NumberStreet" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.City" class="form-label"></label>
+        <input asp-for="Client.City" class="form-control" />
+        <span asp-validation-for="Client.City" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.StateName" class="form-label"></label>
+        <input asp-for="Client.StateName" class="form-control" />
+        <span asp-validation-for="Client.StateName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.Country" class="form-label"></label>
+        <input asp-for="Client.Country" class="form-control" />
+        <span asp-validation-for="Client.Country" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.Postcode" class="form-label"></label>
+        <input asp-for="Client.Postcode" class="form-control" />
+        <span asp-validation-for="Client.Postcode" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.CompanyPhone" class="form-label"></label>
+        <input asp-for="Client.CompanyPhone" class="form-control" />
+        <span asp-validation-for="Client.CompanyPhone" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.CompanyABN" class="form-label"></label>
+        <input asp-for="Client.CompanyABN" class="form-control" />
+        <span asp-validation-for="Client.CompanyABN" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.ContactFirstName" class="form-label"></label>
+        <input asp-for="Client.ContactFirstName" class="form-control" />
+        <span asp-validation-for="Client.ContactFirstName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.ContactMiddleName" class="form-label"></label>
+        <input asp-for="Client.ContactMiddleName" class="form-control" />
+        <span asp-validation-for="Client.ContactMiddleName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.ContactLastName" class="form-label"></label>
+        <input asp-for="Client.ContactLastName" class="form-control" />
+        <span asp-validation-for="Client.ContactLastName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.ContactEmail" class="form-label"></label>
+        <input asp-for="Client.ContactEmail" class="form-control" />
+        <span asp-validation-for="Client.ContactEmail" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.ContactMobile" class="form-label"></label>
+        <input asp-for="Client.ContactMobile" class="form-control" />
+        <span asp-validation-for="Client.ContactMobile" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="Client.ClientId" />
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <a asp-page="/Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
