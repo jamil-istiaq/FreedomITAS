@@ -26,9 +26,24 @@
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item me-2">
-                            <a class="nav-link text-white bg-primary p-2 rounded" asp-area="" asp-page="/Clients/ClientCreate">Clients</a>
+                            <a class="nav-link text-white bg-primary p-2 rounded" asp-page="/Index">Home</a>
                         </li>
+                        <li class="nav-item me-2">
+                            <a class="nav-link text-white bg-primary p-2 rounded" asp-area="" asp-page="/Clients/ClientCreate">Clients</a>
+                        <li class="nav-item me-2">
+                            <a class="nav-link text-white bg-primary p-2 rounded" asp-area="" asp-page="/Admin/Index">Users</a>
+                        </li>                        
                     </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <div class="d-flex align-items-center">
+                            <span class="me-3">Welcome, <strong>@User.FindFirst("FullName")?.Value</strong></span>
+
+                            <form method="post" asp-page="/Logout" class="d-inline">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         </nav>

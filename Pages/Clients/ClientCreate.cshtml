@@ -1,196 +1,123 @@
 ﻿@page
+@attribute [AllowAnonymous]
 @model FreedomITAS.Pages.Clients.ClientCreateModel
 @{
     ViewData["Title"] = "Create Client";
 }
 
-<div class="form-container">
-    <h3 class="title">Freedom IT New Client Page</h3>
-
-    <form method="post" asp-page-handler="Create" id="clientForm" class="form">
-
-        <div class="form-grid">
-            <div class="form-group">
-                <label asp-for="Client.CompanyName">Company Name</label>
-                <input asp-for="Client.CompanyName" class="form-control" />
-                <span asp-validation-for="Client.CompanyName" class="error-message"></span>
-            </div>
-            
-            <div class="form-group">
-                <label asp-for="Client.NumberStreet">Street Address</label>
-                <input asp-for="Client.NumberStreet" class="form-control" />
-                <span asp-validation-for="Client.NumberStreet" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.City">City/Town</label>
-                <input asp-for="Client.City" class="form-control" />
-                <span asp-validation-for="Client.City" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.StateName">State</label>
-                <select asp-for="Client.StateName" class="form-control">
-                    <option value="">-Select State-</option>
-                    <option value="NSW">New South Wales (NSW)</option>
-                    <option value="VIC">Victoria (VIC)</option>
-                    <option value="QLD">Queensland (QLD)</option>
-                    <option value="WA">Western Australia (WA)</option>
-                    <option value="SA">South Australia (SA)</option>
-                    <option value="TAS">Tasmania (TAS)</option>
-                    <option value="ACT">Australian Capital Territory (ACT)</option>
-                    <option value="NT">Northern Territory (NT)</option>
-                </select>
-                <span asp-validation-for="Client.StateName" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.Country">Country</label>
-                <input asp-for="Client.Country" class="form-control" />
-                <span asp-validation-for="Client.Country" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.Postcode">Post Code</label>
-                <input asp-for="Client.Postcode" class="form-control" />
-                <span asp-validation-for="Client.Postcode" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.CompanyPhone">Company Phone</label>
-                <input asp-for="Client.CompanyPhone" class="form-control" />
-                <span asp-validation-for="Client.CompanyPhone" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.CompanyABN">Company ABN</label>
-                <input asp-for="Client.CompanyABN" class="form-control" />
-                <span asp-validation-for="Client.CompanyABN" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.ContactFirstName">Contact First Name</label>
-                <input asp-for="Client.ContactFirstName" class="form-control" />
-                <span asp-validation-for="Client.ContactFirstName" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.ContactMiddleName">Contact Middle Name</label>
-                <input asp-for="Client.ContactMiddleName" class="form-control" />
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.ContactLastName">Contact Last Name</label>
-                <input asp-for="Client.ContactLastName" class="form-control" />
-                <span asp-validation-for="Client.ContactLastName" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.ContactEmail">Contact Email</label>
-                <input asp-for="Client.ContactEmail" class="form-control" />
-                <span asp-validation-for="Client.ContactEmail" class="error-message"></span>
-            </div>
-
-            <div class="form-group">
-                <label asp-for="Client.ContactMobile">Contact Mobile</label>
-                <input asp-for="Client.ContactMobile" class="form-control" />
-                <span asp-validation-for="Client.ContactMobile" class="error-message"></span>
-            </div>
+<div class="container mt-5 mb-5">
+    <div class="card shadow-sm border-0 rounded-4">
+        <div class="card-header bg-primary text-white rounded-top-4">
+            <h3 class="mb-0 text-center py-2">Freedom IT – New Client Registration</h3>
         </div>
+        <div class="card-body p-4">
+            <form method="post" asp-page-handler="Create" id="clientForm">
+                <div class="row g-3">
+                    <!-- Company Info -->
+                    <div class="col-md-6">
+                        <label asp-for="Client.CompanyName" class="form-label fw-semibold">Company Name</label>
+                        <input asp-for="Client.CompanyName" class="form-control" />
+                        <span asp-validation-for="Client.CompanyName" class="text-danger small"></span>
+                    </div>
 
-        <div class="form-actions">
-            <button type="submit" class="submit-btn">Submit</button>
+                    <div class="col-md-6">
+                        <label asp-for="Client.CompanyABN" class="form-label fw-semibold">Company ABN</label>
+                        <input asp-for="Client.CompanyABN" class="form-control" />
+                        <span asp-validation-for="Client.CompanyABN" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Client.CompanyPhone" class="form-label fw-semibold">Company Phone</label>
+                        <input asp-for="Client.CompanyPhone" class="form-control" />
+                        <span asp-validation-for="Client.CompanyPhone" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Client.NumberStreet" class="form-label fw-semibold">Street Address</label>
+                        <input asp-for="Client.NumberStreet" class="form-control" />
+                        <span asp-validation-for="Client.NumberStreet" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Client.City" class="form-label fw-semibold">City/Town</label>
+                        <input asp-for="Client.City" class="form-control" />
+                        <span asp-validation-for="Client.City" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Client.StateName" class="form-label fw-semibold">State</label>
+                        <select asp-for="Client.StateName" class="form-select">
+                            <option value="">-- Select State --</option>
+                            <option value="NSW">NSW</option>
+                            <option value="VIC">VIC</option>
+                            <option value="QLD">QLD</option>
+                            <option value="WA">WA</option>
+                            <option value="SA">SA</option>
+                            <option value="TAS">TAS</option>
+                            <option value="ACT">ACT</option>
+                            <option value="NT">NT</option>
+                        </select>
+                        <span asp-validation-for="Client.StateName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Client.Postcode" class="form-label fw-semibold">Post Code</label>
+                        <input asp-for="Client.Postcode" class="form-control" />
+                        <span asp-validation-for="Client.Postcode" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Client.Country" class="form-label fw-semibold">Country</label>
+                        <input asp-for="Client.Country" class="form-control" />
+                        <span asp-validation-for="Client.Country" class="text-danger small"></span>
+                    </div>
+
+                    <!-- Contact Info -->
+                    <div class="col-md-4">
+                        <label asp-for="Client.ContactFirstName" class="form-label fw-semibold">Contact First Name</label>
+                        <input asp-for="Client.ContactFirstName" class="form-control" />
+                        <span asp-validation-for="Client.ContactFirstName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Client.ContactMiddleName" class="form-label fw-semibold">Contact Middle Name</label>
+                        <input asp-for="Client.ContactMiddleName" class="form-control" />
+                    </div>
+
+                    <div class="col-md-4">
+                        <label asp-for="Client.ContactLastName" class="form-label fw-semibold">Contact Last Name</label>
+                        <input asp-for="Client.ContactLastName" class="form-control" />
+                        <span asp-validation-for="Client.ContactLastName" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Client.ContactEmail" class="form-label fw-semibold">Contact Email</label>
+                        <input asp-for="Client.ContactEmail" class="form-control" />
+                        <span asp-validation-for="Client.ContactEmail" class="text-danger small"></span>
+                    </div>
+
+                    <div class="col-md-6">
+                        <label asp-for="Client.ContactMobile" class="form-label fw-semibold">Contact Mobile</label>
+                        <input asp-for="Client.ContactMobile" class="form-control" />
+                        <span asp-validation-for="Client.ContactMobile" class="text-danger small"></span>
+                    </div>
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button type="submit" class="btn btn-success px-5 py-2 fw-bold">
+                        <i class="bi bi-person-plus-fill me-2"></i>Submit Client
+                    </button>
+                </div>
+
+                <vc:validation-summary model-only="true" />
+            </form>
         </div>
-        
-<vc:validation-summary model-only="true" />
-    </form>
+    </div>
 </div>
 
 @section Scripts {
-    
+    <partial name="_ValidationScriptsPartial" />
 }
 
-<style>
-    .form-container {
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 40px 20px;
-        background-color: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .title {
-        text-align: center;
-        margin-bottom: 40px;
-        font-size: 28px;
-        color: #333;
-    }
-
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 20px;
-    }
-
-    .form-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    label {
-        font-weight: 600;
-        margin-bottom: 6px;
-        color: #555;
-    }
-
-    .form-control {
-        padding: 10px;
-        font-size: 16px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        transition: border-color 0.3s ease;
-    }
-
-        .form-control:focus {
-            border-color: #4CAF50;
-            outline: none;
-        }
-
-    .submit-btn {
-        background-color: #4CAF50;
-        color: white;
-        padding: 15px 30px;
-        font-size: 16px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        transition: background-color 0.3s ease;
-        margin-top: 20px;
-    }
-
-        .submit-btn:hover {
-            background-color: #45a049;
-        }
-
-    .form-actions {
-        display: flex;
-        justify-content: center;
-        margin-top: 20px;
-    }
-
-    .error-message {
-        color: red;
-        font-size: 12px;
-        margin-top: 5px;
-    }
-
-    /* media (max-width: 600px) { */
-    /*     .form-grid */
-
-    /* { */
-    /*     grid-template-columns: 1fr; */
-    /* } */
-
-    /* } */
-</style>
+<!-- Optional: Bootstrap Icons (if you want the icons to show) -->
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
