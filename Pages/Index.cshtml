@@ -1,85 +1,32 @@
 ﻿@page
 @model IndexModel
-@attribute [Authorize]
-@{
-    ViewData["Title"] = "FreedomIT Home";
-}
+@using Newtonsoft.Json.Linq
 
-@if (Model.Clients != null && Model.Clients.Any())
+<h2>Clients from HaloPSA</h2>
+
+@if (Model.Clients != null && Model.Clients.Count > 0)
 {
-    <div class="container mt-4">
-        <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
-            <h2 class="mb-2">Clients</h2>
-            <a asp-page="/Clients/ClientCreate" class="btn btn-primary mb-2">Add New Client</a>
-        </div>
-
-        <div class="table-responsive">
-            <table class="table table-striped table-bordered text-center align-middle w-100">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Company ID</th>
-                        <th>Company Name</th>
-                        <th>Street</th>
-                        <th>City</th>
-                        <th>Postcode</th>
-                        <th>State</th>
-                        <th>Country</th>
-                        <th>Company Phone</th>
-                        <th>ABN</th>
-                        <th>Contact Name</th>                        
-                        <th>Contact Email</th>
-                        <th>Contact Mobile</th>
-                        <th>Actions</th>
-                        <th>Create Profile</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var client in Model.Clients)
-                    {
-                        <tr>
-                            <td>@client.ClientId</td>
-                            <td>@client.CompanyName</td>
-                            <td>@client.NumberStreet</td>
-                            <td>@client.City</td>
-                            <td>@client.Postcode</td>
-                            <td>@client.StateName</td>
-                            <td>@client.Country</td>
-                            <td>@client.CompanyPhone</td>
-                            <td>@client.CompanyABN</td>
-                            <td>@($"{client.ContactFirstName} {(string.IsNullOrWhiteSpace(client.ContactMiddleName) ? "" : client.ContactMiddleName + " ")}{client.ContactLastName}")</td>
-                            <td>@client.ContactMobile</td>
-                            <td>@client.ContactEmail</td>
-                            <td>
-                                <div class="d-flex flex-wrap justify-content-center gap-2">
-                                    <a asp-page="/Clients/ClientEdit" asp-route-id="@(Model.EncryptedIds != null && Model.EncryptedIds.ContainsKey(client.ClientId)? Model.EncryptedIds[client.ClientId]: "")"
-                                       class="btn btn-sm btn-primary" style="min-width: 80px;">Edit
-                                   </a>
-
-
-                                    <form method="post" asp-page-handler="Delete" asp-route-id="@client.ClientId" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                                        <button type="submit" class="btn btn-sm btn-danger" style="min-width: 80px;">Delete</button>
-                                    </form>
-
-
-                                </div>
-                            </td>
-                            <td>
-                                <div class="d-flex flex-wrap justify-content-center gap-2">
-                                    <a asp-page="/Clients/Edit" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" style="min-width: 80px;">HaloPSA</a>
-                                    <a asp-page="/Clients/Delete" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" class="btn btn-sm btn-info" style="min-width: 80px;">Hudu</a>
-                                    <a asp-page="/Clients/Delete" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" class="btn btn-sm btn-info" style="min-width: 80px;">Syncro</a>
-                                </div>
-                            </td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-        </div>
-    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Client ID</th>
+                <th>Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (JObject client in Model.Clients)
+            {
+                <tr>
+                    <td>@client["id"]</td>
+                    <td>@client["name"]</td>
+                    <td>@client["email"]</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
 else
 {
-    <div class="container mt-4">
-        <div class="alert alert-info">No client data available.</div>
-    </div>
+    <p>No clients found.</p>
 }

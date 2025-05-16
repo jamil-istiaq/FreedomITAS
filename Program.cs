@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using FreedomITAS.Models;
 using Microsoft.AspNetCore.Identity;
 
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services
@@ -26,6 +27,15 @@ builder.Services.ConfigureApplicationCookie(options =>
     options.LoginPath = "/Login";
     options.AccessDeniedPath = "/AccessDenied";
 });
+
+//API HaloPSA
+builder.Services.Configure<HaloPSA>(
+    builder.Configuration.GetSection("HaloPSA"));
+
+builder.Services.AddHttpClient();
+builder.Services.AddTransient<HaloPSAService>();
+builder.Services.AddHttpClient<HaloServices>();
+
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 
