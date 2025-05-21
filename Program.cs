@@ -29,12 +29,9 @@ builder.Services.ConfigureApplicationCookie(options =>
 });
 
 //API HaloPSA
-builder.Services.Configure<HaloPSA>(
-    builder.Configuration.GetSection("HaloPSA"));
-
-builder.Services.AddHttpClient();
+builder.Services.Configure<HaloPSA>(builder.Configuration.GetSection("HaloPSA"));
 builder.Services.AddTransient<HaloPSAService>();
-builder.Services.AddHttpClient<HaloServices>();
+builder.Services.AddHttpClient();
 
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();

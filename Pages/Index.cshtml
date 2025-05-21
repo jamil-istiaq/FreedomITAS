@@ -3,9 +3,10 @@
 @using Newtonsoft.Json.Linq
 
 <h2>Clients from HaloPSA</h2>
-
+<pre>@Model.ClientsJson</pre>
 @if (Model.Clients != null && Model.Clients.Count > 0)
 {
+
     <table class="table table-striped">
         <thead>
             <tr>

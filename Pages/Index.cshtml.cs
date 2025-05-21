@@ -74,19 +74,31 @@ namespace FreedomITAS.Pages
         //}
 
         //API Calls
-        private readonly HaloServices _haloService;
+        private readonly HaloPSAService _haloService;
 
         public JArray Clients { get; set; }
+        public string ClientsJson { get; set; }
 
-        public IndexModel(HaloServices haloService)
+        public IndexModel(HaloPSAService haloService)
         {
             _haloService = haloService;
         }
 
         public async Task OnGetAsync()
         {
-            var clientJson = await _haloService.GetClientsAsync();
-            Clients = JArray.Parse(clientJson);
+            try
+            {
+                ClientsJson = await _haloService.GetClientsAsync();
+
+                var parsed = JObject.Parse(ClientsJson);
+                Clients = (JArray)parsed["clients"]; // Adjust key as needed
+            }
+            catch (Exception ex)
+            {
+                ClientsJson = $"Error: {ex.Message}";
+            }
         }
+
+
     }
 }

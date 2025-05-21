@@ -40,11 +40,54 @@ namespace FreedomITAS
 
             var client = _httpClientFactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await client.GetAsync($"{_settings.ApiBaseUrl}/tickets");
+            var response = await client.GetAsync($"{_settings.ApiBaseUrl}tickets");
             response.EnsureSuccessStatusCode();
 
             return await response.Content.ReadAsStringAsync();
+        }
+
+        public async Task<string> GetClientsAsync()
+        {
+            var token = await GetAccessTokenAsync();
+
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var requestUrl = $"{_settings.ApiBaseUrl}/Client";
+            var response = await client.GetAsync(requestUrl);
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine($"Response Status: {response.StatusCode}");
+            Console.WriteLine($"Response Body: {responseBody}");
+
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new Exception($"API Error: {response.StatusCode}\n{responseBody}");
+            }
+
+            return responseBody;
+
+            //var token = await GetAccessTokenAsync();
+
+            //var client = _httpClientFactory.CreateClient();
+            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);         
+            //var requestUrl = $"{_settings.ApiBaseUrl}Client";
+            //Console.WriteLine("Calling API URL: " + requestUrl); // Add this for debugging
+
+            //var response = await client.GetAsync(requestUrl);
+
+            //var responseBody = await response.Content.ReadAsStringAsync(); // Read even on error
+
+            //if (!response.IsSuccessStatusCode)
+            //{
+            //    throw new Exception($"Status: {response.StatusCode}, Body: {responseBody}");
+            //}
+
+            //return responseBody;
         }
     }
 }
