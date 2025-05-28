@@ -3,7 +3,7 @@
 @using Newtonsoft.Json.Linq
 
 <h2>Clients from HaloPSA</h2>
-<pre>@Model.ClientsJson</pre>
+@* <pre>@Model.ClientsJson</pre> *@
 @if (Model.Clients != null && Model.Clients.Count > 0)
 {
 
@@ -13,6 +13,8 @@
                 <th>Client ID</th>
                 <th>Name</th>
                 <th>Email</th>
+                <th>Phone</th>
+                <th>Mobile</th>
             </tr>
         </thead>
         <tbody>
@@ -21,7 +23,10 @@
                 <tr>
                     <td>@client["id"]</td>
                     <td>@client["name"]</td>
-                    <td>@client["email"]</td>
+                    <td>@client["emailaddress"]</td>
+                    <td>@client["phonenumber_preferred"]</td>
+                    <td>@client["sitephonenumber"]</td>
+                    
                 </tr>
             }
         </tbody>

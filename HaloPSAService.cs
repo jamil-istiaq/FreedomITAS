@@ -56,7 +56,8 @@ namespace FreedomITAS
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var requestUrl = $"{_settings.ApiBaseUrl}/Client";
+            var requestUrl = $"{_settings.ApiBaseUrl}/users";
+
             var response = await client.GetAsync(requestUrl);
 
             var responseBody = await response.Content.ReadAsStringAsync();
@@ -71,23 +72,8 @@ namespace FreedomITAS
 
             return responseBody;
 
-            //var token = await GetAccessTokenAsync();
-
-            //var client = _httpClientFactory.CreateClient();
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);         
-            //var requestUrl = $"{_settings.ApiBaseUrl}Client";
-            //Console.WriteLine("Calling API URL: " + requestUrl); // Add this for debugging
-
-            //var response = await client.GetAsync(requestUrl);
-
-            //var responseBody = await response.Content.ReadAsStringAsync(); // Read even on error
-
-            //if (!response.IsSuccessStatusCode)
-            //{
-            //    throw new Exception($"Status: {response.StatusCode}, Body: {responseBody}");
-            //}
-
-            //return responseBody;
         }
+
+        
     }
 }

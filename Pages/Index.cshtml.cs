@@ -91,7 +91,7 @@ namespace FreedomITAS.Pages
                 ClientsJson = await _haloService.GetClientsAsync();
 
                 var parsed = JObject.Parse(ClientsJson);
-                Clients = (JArray)parsed["clients"]; // Adjust key as needed
+                Clients = (JArray)parsed["users"]; 
             }
             catch (Exception ex)
             {
