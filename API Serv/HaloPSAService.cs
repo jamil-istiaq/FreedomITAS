@@ -32,21 +32,7 @@ namespace FreedomITAS
             var content = await response.Content.ReadAsStringAsync();
             using var doc = JsonDocument.Parse(content);
             return doc.RootElement.GetProperty("access_token").GetString();
-        }
-
-        public async Task<string> GetTicketsAsync()
-        {
-            var token = await GetAccessTokenAsync();
-
-            var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            var response = await client.GetAsync($"{_settings.ApiBaseUrl}tickets");
-            response.EnsureSuccessStatusCode();
-
-            return await response.Content.ReadAsStringAsync();
-        }
+        }       
 
         public async Task<string> GetClientsAsync()
         {

@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using FreedomITAS.Models;
 using FreedomITAS.Data;
 using Newtonsoft.Json.Linq;
+using FreedomITAS.API_Serv;
+using System.Text.Json;
 
 namespace FreedomITAS.Pages
 {
@@ -15,10 +17,11 @@ namespace FreedomITAS.Pages
         private readonly RouteProtector _protector;
 
 
-        public IndexModel(AppDbContext context, RouteProtector protector)
+        public IndexModel(AppDbContext context, RouteProtector protector, ZomentumService zomentumService)
         {
             _context = context;
             _protector = protector;
+            _zomentumService = zomentumService;
         }
 
         public IList<ClientModel> Clients { get; set; }
@@ -99,6 +102,59 @@ namespace FreedomITAS.Pages
         //    }
         //}
 
+        private readonly ZomentumService _zomentumService;
+
+        //public JsonElement ClientsJson { get; private set; }
+        [BindProperty]
+        public string SelectedSource { get; set; }
+
+        [BindProperty]
+        public string ClientId { get; set; }        
+        public async Task<IActionResult> OnPostPushClientAsync()
+        {
+            var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == ClientId);
+
+            if (client == null)
+            {
+                ModelState.AddModelError("", "Client not found.");
+                return Page();
+            }
+
+            try
+            {
+                var payload = new
+                {
+                    name = client.CompanyName,
+                    billing_address = new
+                    {
+                        address_line_1 = client.NumberStreet,
+                        city = client.City,
+                        state = client.StateName,
+                        pincode = client.Postcode,
+                        country = client.Country
+                    },
+                    phone = client.CompanyPhone,                    
+                };
+
+                switch (SelectedSource)
+                {
+                    case "Zomentum":
+                        var response = await _zomentumService.CreateClientAsync(payload);
+                        TempData["Message"] = response;
+                        break;
+                    default:
+                        TempData["Message"] = "No valid system selected.";
+                        break;
+                }
+
+                return RedirectToPage();
+            }
+            catch (Exception ex)
+            {
+                TempData["Message"] = $"Error: {ex.Message}";
+                return RedirectToPage();
+            }
+        }
 
     }
 }

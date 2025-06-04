@@ -2,6 +2,8 @@ using FreedomITAS;
 using FreedomITAS.Data;
 using Microsoft.EntityFrameworkCore;
 using FreedomITAS.Models;
+using FreedomITAS.API_Settings;
+using FreedomITAS.API_Serv;
 using Microsoft.AspNetCore.Identity;
 
 
@@ -33,6 +35,10 @@ builder.Services.Configure<HaloPSA>(builder.Configuration.GetSection("HaloPSA"))
 builder.Services.AddTransient<HaloPSAService>();
 builder.Services.AddHttpClient();
 
+// Zomentum
+builder.Services.Configure<ZomentumSettings>(builder.Configuration.GetSection("Zomentum"));
+builder.Services.AddTransient<ZomentumService>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 

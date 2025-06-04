@@ -65,12 +65,21 @@
                                 </div>
                             </td>
                             <td>
-                                <div class="d-flex flex-wrap justify-content-center gap-2">
-                                    <a asp-page="/Clients/Edit" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" style="min-width: 80px;">HaloPSA</a>
-                                    <a asp-page="/Clients/Delete" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" class="btn btn-sm btn-info" style="min-width: 80px;">Hudu</a>
-                                    <a asp-page="/Clients/Delete" asp-route-id="@client.ClientId" class="btn btn-sm btn-info" class="btn btn-sm btn-info" style="min-width: 80px;">Syncro</a>
-                                </div>
+                                <form method="post" asp-page-handler="PushClient">
+                                    <input type="hidden" name="ClientId" value="@client.ClientId" />
+                                    <div class="d-flex flex-column align-items-center gap-2">
+                                        <select name="SelectedSource" class="form-select" style="width: 100px;" required>
+                                            <option value="">Select</option>
+                                            <option value="HaloPSA">HaloPSA</option>
+                                            <option value="Hudu">Hudu</option>
+                                            <option value="Syncro">Syncro</option>
+                                            <option value="Zomentum">Zomentum</option>
+                                        </select>
+                                        <button type="submit" class="btn btn-sm btn-primary" style="min-width: 80px;">Create</button>
+                                    </div>
+                                </form>
                             </td>
+
                         </tr>
                     }
                 </tbody>
