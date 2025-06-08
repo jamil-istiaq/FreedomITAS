@@ -106,7 +106,7 @@ namespace FreedomITAS.Pages
 
         //public JsonElement ClientsJson { get; private set; }
         [BindProperty]
-        public string SelectedSource { get; set; }
+        public List<string> SelectedSource { get; set; }
 
         [BindProperty]
         public string ClientId { get; set; }        
@@ -117,6 +117,12 @@ namespace FreedomITAS.Pages
             if (client == null)
             {
                 ModelState.AddModelError("", "Client not found.");
+                return Page();
+            }
+
+            if (SelectedSource == null || !SelectedSource.Any())
+            {
+                ModelState.AddModelError("", "Please select at least one system.");
                 return Page();
             }
 
@@ -133,25 +139,44 @@ namespace FreedomITAS.Pages
                         pincode = client.Postcode,
                         country = client.Country
                     },
-                    phone = client.CompanyPhone,                    
+                    phone = client.CompanyPhone
                 };
 
-                switch (SelectedSource)
+                foreach (var source in SelectedSource)
                 {
-                    case "Zomentum":
-                        var response = await _zomentumService.CreateClientAsync(payload);
-                        TempData["Message"] = response;
-                        break;
-                    default:
-                        TempData["Message"] = "No valid system selected.";
-                        break;
+                    switch (source)
+                    {
+                        case "Zomentum":
+                            var zomentumResponse = await _zomentumService.CreateClientAsync(payload);
+                            TempData[$"ZomentumMessage"] = zomentumResponse;
+                            break;
+
+                        //case "HaloPSA":
+                        //    var haloResponse = await _haloService.CreateClientAsync(payload);
+                        //    TempData["HaloMessage"] = haloResponse;
+                        //    break;
+
+                        //case "Hudu":
+                        //    var huduResponse = await _huduService.CreateClientAsync(payload);
+                        //    TempData["HuduMessage"] = huduResponse;
+                        //    break;
+
+                        //case "Syncro":
+                        //    var syncroResponse = await _syncroService.CreateClientAsync(payload);
+                        //    TempData["SyncroMessage"] = syncroResponse;
+                        //    break;
+
+                        default:
+                            TempData["ErrorMessage"] = $"Unknown system selected: {source}";
+                            break;
+                    }
                 }
 
                 return RedirectToPage();
             }
             catch (Exception ex)
             {
-                TempData["Message"] = $"Error: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error: {ex.Message}";
                 return RedirectToPage();
             }
         }
