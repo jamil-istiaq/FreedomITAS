@@ -9,9 +9,9 @@ namespace FreedomITAS.API_Serv
     public class HuduService
     {
         private readonly IHttpClientFactory _httpClientFactory;
-        private readonly HudoSettings _settings;
+        private readonly HuduSettings _settings;
 
-        public HuduService(IHttpClientFactory httpClientFactory, IOptions<HudoSettings> options)
+        public HuduService(IHttpClientFactory httpClientFactory, IOptions<HuduSettings> options)
         {
             _httpClientFactory = httpClientFactory;
             _settings = options.Value;

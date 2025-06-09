@@ -1,6 +1,6 @@
 ﻿namespace FreedomITAS.API_Settings
 {
-    public class HudoSettings
+    public class HuduSettings
     {
         public string ApiBaseUrl { get; set; }
         public string ApiKey { get; set; }

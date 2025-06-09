@@ -17,11 +17,12 @@ namespace FreedomITAS.Pages
         private readonly RouteProtector _protector;
 
 
-        public IndexModel(AppDbContext context, RouteProtector protector, ZomentumService zomentumService)
+        public IndexModel(AppDbContext context, RouteProtector protector, ZomentumService zomentumService, HuduService huduService)
         {
             _context = context;
             _protector = protector;
             _zomentumService = zomentumService;
+            _huduService = huduService;
         }
 
         public IList<ClientModel> Clients { get; set; }
@@ -103,14 +104,14 @@ namespace FreedomITAS.Pages
         //}
 
         private readonly ZomentumService _zomentumService;
+        private readonly HuduService _huduService;
 
-        //public JsonElement ClientsJson { get; private set; }
         [BindProperty]
         public List<string> SelectedSource { get; set; }
 
         [BindProperty]
         public string ClientId { get; set; }        
-        public async Task<IActionResult> OnPostPushClientAsync()
+        public async Task<IActionResult> OnPostPushClientAsync()     
         {
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == ClientId);
 
@@ -139,7 +140,8 @@ namespace FreedomITAS.Pages
                         pincode = client.Postcode,
                         country = client.Country
                     },
-                    phone = client.CompanyPhone
+                    phone = client.CompanyPhone,
+                    phone_number = client.CompanyPhone
                 };
 
                 foreach (var source in SelectedSource)
@@ -147,24 +149,12 @@ namespace FreedomITAS.Pages
                     switch (source)
                     {
                         case "Zomentum":
-                            var zomentumResponse = await _zomentumService.CreateClientAsync(payload);
-                            TempData[$"ZomentumMessage"] = zomentumResponse;
+                            TempData["ZomentumMessage"] = await _zomentumService.CreateClientAsync(payload);
                             break;
 
-                        //case "HaloPSA":
-                        //    var haloResponse = await _haloService.CreateClientAsync(payload);
-                        //    TempData["HaloMessage"] = haloResponse;
-                        //    break;
-
-                        //case "Hudu":
-                        //    var huduResponse = await _huduService.CreateClientAsync(payload);
-                        //    TempData["HuduMessage"] = huduResponse;
-                        //    break;
-
-                        //case "Syncro":
-                        //    var syncroResponse = await _syncroService.CreateClientAsync(payload);
-                        //    TempData["SyncroMessage"] = syncroResponse;
-                        //    break;
+                        case "Hudu":
+                            TempData["HuduMessage"] = await _huduService.CreateCompanyAsync(payload);
+                            break;
 
                         default:
                             TempData["ErrorMessage"] = $"Unknown system selected: {source}";
@@ -180,6 +170,5 @@ namespace FreedomITAS.Pages
                 return RedirectToPage();
             }
         }
-
     }
 }
