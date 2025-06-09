@@ -40,6 +40,12 @@ builder.Services.Configure<ZomentumSettings>(builder.Configuration.GetSection("Z
 builder.Services.AddTransient<ZomentumService>();
 builder.Services.AddHttpClient();
 
+//Hudo
+builder.Services.Configure<HuduSettings>(builder.Configuration.GetSection("Hudu"));
+builder.Services.AddTransient<HuduService>();
+builder.Services.AddHttpClient();
+
+
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 
 

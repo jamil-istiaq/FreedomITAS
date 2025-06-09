@@ -19,37 +19,37 @@ namespace FreedomITAS.API_Serv
             _settings = options.Value;
         }
 
-        public async Task<string> GetLeadsAsync()
-        {
-            var client = _httpClientFactory.CreateClient();
+        //public async Task<string> GetLeadsAsync()
+        //{
+        //    var client = _httpClientFactory.CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
+        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await client.GetAsync($"{_settings.ApiBaseUrl}leads");
+        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}leads");
 
-            response.EnsureSuccessStatusCode();
+        //    response.EnsureSuccessStatusCode();
 
-            return await response.Content.ReadAsStringAsync();
-        }
+        //    return await response.Content.ReadAsStringAsync();
+        //}
 
-        public async Task<JsonElement> GetClientsAsync()
-        {
-            var client = _httpClientFactory.CreateClient();
+        //public async Task<JsonElement> GetClientsAsync()
+        //{
+        //    var client = _httpClientFactory.CreateClient();
 
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
+        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-            var response = await client.GetAsync($"{_settings.ApiBaseUrl}client/companies");
-            response.EnsureSuccessStatusCode();
+        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}client/companies");
+        //    response.EnsureSuccessStatusCode();
 
-            var json = await response.Content.ReadAsStringAsync();
+        //    var json = await response.Content.ReadAsStringAsync();
 
-            using var document = JsonDocument.Parse(json);
+        //    using var document = JsonDocument.Parse(json);
                     
 
-            return document.RootElement.Clone();
-        }
+        //    return document.RootElement.Clone();
+        //}
 
         public async Task<string> CreateClientAsync(object clientPayload)
         {
