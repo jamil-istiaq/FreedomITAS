@@ -28,6 +28,11 @@ builder.Services.ConfigureApplicationCookie(options =>
 {
     options.LoginPath = "/Login";
     options.AccessDeniedPath = "/AccessDenied";
+    options.Cookie.HttpOnly = true;
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+    options.Cookie.SameSite = SameSiteMode.None;
+    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
 });
 
 //API HaloPSA
@@ -72,7 +77,15 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseAuthentication(); // <- required before UseAuthorization
+app.UseCookiePolicy(new CookiePolicyOptions
+{
+    MinimumSameSitePolicy = SameSiteMode.Lax,
+    HttpOnly = Microsoft.AspNetCore.CookiePolicy.HttpOnlyPolicy.Always,
+    Secure = CookieSecurePolicy.SameAsRequest
+});
+
+app.UseCookiePolicy();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
