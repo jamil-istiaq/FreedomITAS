@@ -32,6 +32,7 @@ public class LoginModel : PageModel
         public string Password { get; set; }
     }
 
+    [ValidateAntiForgeryToken]
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)

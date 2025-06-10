@@ -8,6 +8,7 @@
     <div class="card shadow p-4" style="width: 100%; max-width: 400px;">
         <h3 class="text-center mb-4">Login</h3>
         <form method="post">
+            @Html.AntiForgeryToken()
             <div class="mb-3">
                 <label asp-for="Input.Username" class="form-label">User Name</label>
                 <input asp-for="Input.Username" class="form-control" placeholder="Enter your username" />
