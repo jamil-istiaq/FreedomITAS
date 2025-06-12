@@ -32,18 +32,20 @@ public class LoginModel : PageModel
         public string Password { get; set; }
     }
 
-    [ValidateAntiForgeryToken]
     public async Task<IActionResult> OnPostAsync()
     {
         if (!ModelState.IsValid)
+        {
+            ErrorMessage = "Model state invalid.";
             return Page();
+        }
 
         var user = await _userManager.FindByNameAsync(Input.Username)
                    ?? await _userManager.FindByEmailAsync(Input.Username);
 
         if (user == null)
         {
-            ModelState.AddModelError(string.Empty, "Invalid credentials.");
+            ErrorMessage = "User not found.";
             return Page();
         }
 
@@ -54,7 +56,8 @@ public class LoginModel : PageModel
             return RedirectToPage("/Index");
         }
 
-        ModelState.AddModelError(string.Empty, "Invalid credentials.");
+        ErrorMessage = "Login failed.";
         return Page();
     }
+
 }
