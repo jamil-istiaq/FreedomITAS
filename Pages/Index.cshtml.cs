@@ -13,20 +13,29 @@ namespace FreedomITAS.Pages
 {
     public class IndexModel : PageModel
     {
+        private readonly ClientPushService _clientPushService;
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
+        [BindProperty]
+        public List<string> SelectedSource { get; set; }
+        [BindProperty]
+        public string ClientId { get; set; }
+        [BindProperty]
+        public ClientModel EditedClient { get; set; }
 
-
-        public IndexModel(AppDbContext context, RouteProtector protector, ZomentumService zomentumService, HuduService huduService)
-        {
-            _context = context;
-            _protector = protector;
-            _zomentumService = zomentumService;
-            _huduService = huduService;
-        }
+        [BindProperty(SupportsGet = true)]
+        public int? EditId { get; set; }
 
         public IList<ClientModel> Clients { get; set; }
         public Dictionary<string, string> EncryptedIds { get; set; }
+
+        public IndexModel(AppDbContext context,RouteProtector protector,ClientPushService clientPushService)
+        {
+            _context = context;
+            _protector = protector;
+            _clientPushService = clientPushService;
+        }
+
 
         public async Task OnGetAsync()
         {
@@ -34,20 +43,10 @@ namespace FreedomITAS.Pages
             EncryptedIds = Clients.ToDictionary(c => c.ClientId, c => _protector.Protect(c.ClientId));
         }
 
-        [BindProperty]
-        public List<ClientModel> Client { get; set; } = new List<ClientModel>();
-
-        [BindProperty]
-        public ClientModel EditedClient { get; set; }
-
-        [BindProperty(SupportsGet = true)]
-        public int? EditId { get; set; }
-
-
         public IActionResult OnPostSave()
         {
             TempData["Message"] = "Client updated successfully!";
-            return RedirectToPage(); // Refresh
+            return RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(string id)
@@ -63,7 +62,7 @@ namespace FreedomITAS.Pages
             }
             catch
             {
-                clientId = id; // Assume plain ID if unprotect fails
+                clientId = id; 
             }
 
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
@@ -74,47 +73,13 @@ namespace FreedomITAS.Pages
             await _context.SaveChangesAsync();
 
             TempData["Message"] = $"Client {client.CompanyName} deleted successfully.";
-            return RedirectToPage(); // Refresh page
+            return RedirectToPage(); 
         }
 
-        //API Calls
-        //private readonly HaloPSAService _haloService;
-
-        //public JArray Clients { get; set; }
-        //public string ClientsJson { get; set; }
-
-        //public IndexModel(HaloPSAService haloService)
-        //{
-        //    _haloService = haloService;
-        //}
-
-        //public async Task OnGetAsync()
-        //{
-        //    try
-        //    {
-        //        ClientsJson = await _haloService.GetClientsAsync();
-
-        //        var parsed = JObject.Parse(ClientsJson);
-        //        Clients = (JArray)parsed["users"]; 
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ClientsJson = $"Error: {ex.Message}";
-        //    }
-        //}
-
-        private readonly ZomentumService _zomentumService;
-        private readonly HuduService _huduService;
-
-        [BindProperty]
-        public List<string> SelectedSource { get; set; }
-
-        [BindProperty]
-        public string ClientId { get; set; }        
-        public async Task<IActionResult> OnPostPushClientAsync()     
+        //API Calls      
+        public async Task<IActionResult> OnPostPushClientAsync()
         {
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == ClientId);
-
             if (client == null)
             {
                 ModelState.AddModelError("", "Client not found.");
@@ -129,46 +94,22 @@ namespace FreedomITAS.Pages
 
             try
             {
-                var payload = new
+                var results = await _clientPushService.PushClientAsync(client, SelectedSource);
+
+                foreach (var result in results)
                 {
-                    name = client.CompanyName,
-                    billing_address = new
-                    {
-                        address_line_1 = client.NumberStreet,
-                        city = client.City,
-                        state = client.StateName,
-                        pincode = client.Postcode,
-                        country = client.Country
-                    },
-                    phone = client.CompanyPhone,
-                    phone_number = client.CompanyPhone
-                };
-
-                foreach (var source in SelectedSource)
-                {
-                    switch (source)
-                    {
-                        case "Zomentum":
-                            TempData["ZomentumMessage"] = await _zomentumService.CreateClientAsync(payload);
-                            break;
-
-                        case "Hudu":
-                            TempData["HuduMessage"] = await _huduService.CreateCompanyAsync(payload);
-                            break;
-
-                        default:
-                            TempData["ErrorMessage"] = $"Unknown system selected: {source}";
-                            break;
-                    }
+                    TempData[$"{result.Key}Message"] = result.Value;
                 }
 
                 return RedirectToPage();
             }
             catch (Exception ex)
             {
-                TempData["ErrorMessage"] = $"Error: {ex.Message}";
+                TempData["ErrorMessage"] = $"Error pushing client: {ex.Message}";
                 return RedirectToPage();
             }
         }
+
+
     }
 }

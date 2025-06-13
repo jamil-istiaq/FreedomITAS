@@ -23,7 +23,7 @@ namespace FreedomITAS.API_Serv
         //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
         //    client.DefaultRequestHeaders.Add("X-API-KEY", _settings.ApiKey);
 
-        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}companies");
+        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}users");
         //    response.EnsureSuccessStatusCode();
 
         //    var json = await response.Content.ReadAsStringAsync();

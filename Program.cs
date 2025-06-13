@@ -5,6 +5,7 @@ using FreedomITAS.Models;
 using FreedomITAS.API_Settings;
 using FreedomITAS.API_Serv;
 using Microsoft.AspNetCore.Identity;
+//using FreedomITAS.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,12 +47,13 @@ builder.Services.AddTransient<ZomentumService>();
 builder.Services.AddHttpClient();
 
 //Hudu
-builder.Services.Configure<HuduSettings>(builder.Configuration.GetSection("Hudo"));
+builder.Services.Configure<HuduSettings>(builder.Configuration.GetSection("Hudu"));
 builder.Services.AddTransient<HuduService>();
 builder.Services.AddHttpClient();
 
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
+builder.Services.AddScoped<ClientPushService>();
 
 
 builder.Services.AddRazorPages(options =>
