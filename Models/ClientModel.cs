@@ -10,6 +10,9 @@ namespace FreedomITAS.Models
         [Required]
         public string CompanyName { get; set; }
 
+        public string CompanyType { get; set; }
+        public string? Website { get; set; }
+
         [Required]
         public string NumberStreet { get; set; }
         [Required]

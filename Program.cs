@@ -5,6 +5,7 @@ using FreedomITAS.Models;
 using FreedomITAS.API_Settings;
 using FreedomITAS.API_Serv;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 //using FreedomITAS.Services;
 
 
@@ -91,4 +92,37 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
+
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+    var userEmail = "jamil@freedomit.com.au";
+    var userPassword = "L#fz$6$E4UirjF";
+
+
+    var user = await userManager.FindByEmailAsync(userEmail);
+    if (user == null)
+    {
+        var newUser = new ApplicationUser
+
+        {
+            UserName = userEmail,
+            Email = userEmail,
+            EmailConfirmed = true,// optional but helps avoid issues
+            FullName = "Jamil Istiaq",
+            Role = "Admin"
+        };
+
+        var result = await userManager.CreateAsync(newUser, userPassword);
+
+        if (!result.Succeeded)
+        {
+            foreach (var error in result.Errors)
+            {
+                Console.WriteLine($"Error creating user: {error.Description}");
+            }
+        }
+    }
+}
 app.Run();

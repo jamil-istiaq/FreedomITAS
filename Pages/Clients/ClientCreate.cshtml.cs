@@ -59,25 +59,24 @@ namespace FreedomITAS.Pages.Clients
         }
 
         public async Task<IActionResult> OnPostAsync()
-        {
-            //if (!ModelState.IsValid)
-            //{
-            //    return Page();
-            //}
+        {          
 
             var clientId = await GenerateCompanyIdAsync(); 
 
             var newClient = new ClientModel
             {
                 ClientId = clientId,
-                CompanyName = Client.CompanyName,                
+                CompanyName = Client.CompanyName,
+                CompanyABN = Client.CompanyABN,
+                CompanyType = Client.CompanyType,
+                CompanyPhone = Client.CompanyPhone,
+                Website = Client.Website,
                 NumberStreet = Client.NumberStreet,
                 City = Client.City,                
                 StateName = Client.StateName,
-                Country = Client.Country,
                 Postcode = Client.Postcode,
-                CompanyPhone = Client.CompanyPhone,
-                CompanyABN = Client.CompanyABN,
+                Country = Client.Country,
+
                 ContactFirstName = Client.ContactFirstName,
                 ContactMiddleName = Client.ContactMiddleName,
                 ContactLastName = Client.ContactLastName,
