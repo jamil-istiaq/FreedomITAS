@@ -20,6 +20,11 @@
                         <span asp-validation-for="Client.CompanyName" class="text-danger small"></span>
                     </div>
                     <div class="col-md-6">
+                        <label asp-for="Client.CompanyLegalName" class="form-label fw-semibold">Company Legal Name (If same, Enter Same)</label>
+                        <input asp-for="Client.CompanyLegalName" class="form-control" />
+                        <span asp-validation-for="Client.CompanyLegalName" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
                         <label asp-for="Client.CompanyABN" class="form-label fw-semibold">Company ABN</label>
                         <input asp-for="Client.CompanyABN" class="form-control" />
                         <span asp-validation-for="Client.CompanyABN" class="text-danger small"></span>
@@ -72,6 +77,11 @@
                         <label asp-for="Client.Country" class="form-label fw-semibold">Country</label>
                         <input asp-for="Client.Country" class="form-control" />
                         <span asp-validation-for="Client.Country" class="text-danger small"></span>
+                    </div>
+                    <div class="col-md-6">
+                        <label asp-for="Client.CountryCode" class="form-label fw-semibold">Country Code</label>
+                        <input asp-for="Client.CountryCode" class="form-control" />
+                        <span asp-validation-for="Client.CountryCode" class="text-danger small"></span>
                     </div>
                 </div>
 

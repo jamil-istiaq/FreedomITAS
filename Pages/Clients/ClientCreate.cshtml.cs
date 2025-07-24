@@ -67,6 +67,7 @@ namespace FreedomITAS.Pages.Clients
             {
                 ClientId = clientId,
                 CompanyName = Client.CompanyName,
+                CompanyLegalName = Client.CompanyLegalName,
                 CompanyABN = Client.CompanyABN,
                 CompanyType = Client.CompanyType,
                 CompanyPhone = Client.CompanyPhone,
@@ -76,6 +77,7 @@ namespace FreedomITAS.Pages.Clients
                 StateName = Client.StateName,
                 Postcode = Client.Postcode,
                 Country = Client.Country,
+                CountryCode = Client.CountryCode,
 
                 ContactFirstName = Client.ContactFirstName,
                 ContactMiddleName = Client.ContactMiddleName,
