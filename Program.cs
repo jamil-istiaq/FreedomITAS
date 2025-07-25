@@ -37,10 +37,11 @@ builder.Services.ConfigureApplicationCookie(options =>
     //options.Cookie.SecurePolicy = CookieSecurePolicy.None;
 });
 
-//API HaloPSA
+//HaloPSA
 builder.Services.Configure<HaloPSA>(builder.Configuration.GetSection("HaloPSA"));
 builder.Services.AddTransient<HaloPSAService>();
 builder.Services.AddHttpClient();
+
 
 // Zomentum
 builder.Services.Configure<ZomentumSettings>(builder.Configuration.GetSection("Zomentum"));

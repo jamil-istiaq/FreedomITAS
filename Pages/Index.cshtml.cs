@@ -16,6 +16,7 @@ namespace FreedomITAS.Pages
         private readonly ClientPushService _clientPushService;
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
+
         [BindProperty]
         public List<string> SelectedSource { get; set; }
         [BindProperty]
@@ -29,7 +30,7 @@ namespace FreedomITAS.Pages
         public IList<ClientModel> Clients { get; set; }
         public Dictionary<string, string> EncryptedIds { get; set; }
 
-        public IndexModel(AppDbContext context,RouteProtector protector,ClientPushService clientPushService)
+        public IndexModel(AppDbContext context, RouteProtector protector, ClientPushService clientPushService)
         {
             _context = context;
             _protector = protector;
@@ -62,7 +63,7 @@ namespace FreedomITAS.Pages
             }
             catch
             {
-                clientId = id; 
+                clientId = id;
             }
 
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
@@ -73,7 +74,7 @@ namespace FreedomITAS.Pages
             await _context.SaveChangesAsync();
 
             TempData["Message"] = $"Client {client.CompanyName} deleted successfully.";
-            return RedirectToPage(); 
+            return RedirectToPage();
         }
 
         //API Calls      
@@ -109,7 +110,6 @@ namespace FreedomITAS.Pages
                 return RedirectToPage();
             }
         }
-
 
     }
 }

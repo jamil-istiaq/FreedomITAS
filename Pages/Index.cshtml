@@ -4,7 +4,6 @@
 @{
     ViewData["Title"] = "FreedomIT Home";
 }
-
 @if (Model.Clients != null && Model.Clients.Any())
 {
     <div class="w-100 px container mt-4">
@@ -51,7 +50,7 @@
                         <td>@client.ContactEmail</td>
                         <td>
                             <div class="d-flex flex-wrap justify-content-center gap-2">
-                                <a asp-page="/Clients/ClientEdit" asp-route-id="@(Model.EncryptedIds != null && Model.EncryptedIds.ContainsKey(client.ClientId)? Model.EncryptedIds[client.ClientId]: "")"
+                                <a asp-page="/Clients/ClientEdit" asp-route-id="@(Model.EncryptedIds != null && Model.EncryptedIds.ContainsKey(client.ClientId) ? Model.EncryptedIds[client.ClientId] : "")"
                                    class="btn btn-sm btn-primary" style="min-width: 80px;">
                                     Edit
                                 </a>
