@@ -20,19 +20,15 @@ namespace FreedomITAS
             var client = _httpClientFactory.CreateClient();
 
             var form = new Dictionary<string, string>
-    {
-        { "grant_type", "client_credentials" },
-        { "client_id", _settings.ClientId },
-        { "client_secret", _settings.ClientSecret },
-        { "scope", "all" } // You may test with "openid" or leave out if it causes issues
-    };
+                {
+                    { "grant_type", "client_credentials" },
+                    { "client_id", _settings.ClientId },
+                    { "client_secret", _settings.ClientSecret },
+                    { "scope", "all" } 
+                };
 
             var response = await client.PostAsync(_settings.TokenUrl, new FormUrlEncodedContent(form));
-
             var content = await response.Content.ReadAsStringAsync();
-
-            Console.WriteLine("Token Response:");
-            Console.WriteLine(content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -40,9 +36,7 @@ namespace FreedomITAS
             }
 
             using var doc = JsonDocument.Parse(content);
-            var token = doc.RootElement.GetProperty("access_token").GetString();
-
-            Console.WriteLine("Access Token: " + token);
+            var token = doc.RootElement.GetProperty("access_token").GetString();            
             return token;
         }
 

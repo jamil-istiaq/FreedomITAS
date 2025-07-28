@@ -53,6 +53,11 @@ builder.Services.Configure<HuduSettings>(builder.Configuration.GetSection("Hudu"
 builder.Services.AddTransient<HuduService>();
 builder.Services.AddHttpClient();
 
+//Syncro
+builder.Services.Configure<SyncroSettings>(builder.Configuration.GetSection("Syncro"));
+builder.Services.AddTransient<SyncroService>();
+builder.Services.AddHttpClient();
+
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<ClientPushService>();

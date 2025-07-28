@@ -55,10 +55,14 @@ namespace FreedomITAS.Pages.Clients
 
             // Update fields
             clientToUpdate.CompanyName = Client.CompanyName;
+            clientToUpdate.CompanyLegalName = Client.CompanyLegalName;
+            clientToUpdate.CompanyType = Client.CompanyType;
+            clientToUpdate.Website = Client.Website;
             clientToUpdate.NumberStreet = Client.NumberStreet;
             clientToUpdate.City = Client.City;
             clientToUpdate.StateName = Client.StateName;
             clientToUpdate.Country = Client.Country;
+            clientToUpdate.CountryCode = Client.CountryCode;
             clientToUpdate.Postcode = Client.Postcode;
             clientToUpdate.CompanyPhone = Client.CompanyPhone;
             clientToUpdate.CompanyABN = Client.CompanyABN;

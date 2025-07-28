@@ -10,6 +10,10 @@ namespace FreedomITAS.Models
         [Required]
         public string CompanyName { get; set; }
 
+        public string CompanyLegalName { get; set; }
+        public string CompanyType { get; set; }
+        public string? Website { get; set; }
+
         [Required]
         public string NumberStreet { get; set; }
         [Required]
@@ -19,6 +23,8 @@ namespace FreedomITAS.Models
         public string StateName { get; set; }
         [Required]
         public string Country { get; set; }
+        public string CountryCode { get; set; }
+
         [Required]
         public string Postcode { get; set; }
 

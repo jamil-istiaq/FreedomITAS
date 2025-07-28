@@ -8,12 +8,14 @@ public class ClientPushService
     private readonly ZomentumService _zomentumService;
     private readonly HuduService _huduService;
     private readonly HaloPSAService _haloPSAService;
+    private readonly SyncroService _syncroService;
 
-    public ClientPushService(ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService)
+    public ClientPushService(ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService)
     {
         _zomentumService = zomentumService;
         _huduService = huduService;
         _haloPSAService = haloPSAService;
+        _syncroService = syncroService;
     }
 
     public async Task<Dictionary<string, string>> PushClientAsync(ClientModel client, List<string> systems)
@@ -32,11 +34,16 @@ public class ClientPushService
                         billing_address = new
                         {
                             address_line_1 = client.NumberStreet,
+                            address_line_2 = "",
                             city = client.City,
                             state = client.StateName,
                             pincode = client.Postcode,
-                            country = client.Country
-                        }
+                            country = client.Country,
+                            phone = client.CompanyPhone
+                        },
+                        compnay_types= client.CompanyType,
+                        website=client.Website,
+
                     };
                     results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);
                     break;
@@ -47,6 +54,7 @@ public class ClientPushService
                     {
                         name = client.CompanyName,
                         toplevel_name = "FIT_App",
+                        from_address_override=$"{client.NumberStreet}{client.City}{client.StateName}{client.Country}{client.Postcode}".Trim(),
                         override_org_address = new
                         {
                             line1 = client.NumberStreet,
@@ -69,14 +77,36 @@ public class ClientPushService
                     var huduPayload = new
                     {
                         name = client.CompanyName,
+                        compnay_type = client.CompanyType,
+                        address_line_1=client.NumberStreet,
                         city = client.City,
                         state = client.StateName,
                         zip = client.Postcode,
                         country_name = client.Country,
-                        phone_number = client.CompanyPhone
+                        phone_number = client.CompanyPhone,
+                        website = client.Website
                     };
                     var huduResponse = await _huduService.CreateCompanyAsync(huduPayload);
                     results["Hudu"] = await huduResponse.Content.ReadAsStringAsync();
+                    break;
+
+                case "Syncro":
+                    var syncroPayload = new
+                    {
+                        business_name = client.CompanyLegalName,
+                        firstname= client.ContactFirstName,
+                        lastname= $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
+                        email=client.ContactEmail, 
+                        phone=client.CompanyPhone,
+                        mobile=client.ContactMobile,                        
+                        address = client.NumberStreet,
+                        city = client.City,
+                        state = client.StateName,
+                        zip = client.Postcode,
+                       
+                    };
+                    var syncroResponse = await _syncroService.CreateCompanyAsync(syncroPayload);
+                    results["Syncro"] = await syncroResponse.Content.ReadAsStringAsync();
                     break;
 
                 default:

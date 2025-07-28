@@ -14,6 +14,24 @@
     </div>
 
     <div class="mb-3">
+        <label asp-for="Client.CompanyLegalName" class="form-label">Company Legal Name</label>
+        <input asp-for="Client.CompanyLegalName" class="form-control" />
+        <span asp-validation-for="Client.CompanyLegalName" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.CompanyType" class="form-label">Company Type</label>
+        <input asp-for="Client.CompanyType" class="form-control" />
+        <span asp-validation-for="Client.CompanyType" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.Website" class="form-label">Company Website</label>
+        <input asp-for="Client.Website" class="form-control" />
+        <span asp-validation-for="Client.Website" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
         <label asp-for="Client.NumberStreet" class="form-label">Number Street</label>
         <input asp-for="Client.NumberStreet" class="form-control" />
         <span asp-validation-for="Client.NumberStreet" class="text-danger"></span>
@@ -35,6 +53,12 @@
         <label asp-for="Client.Country" class="form-label">Country</label>
         <input asp-for="Client.Country" class="form-control" />
         <span asp-validation-for="Client.Country" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Client.CountryCode" class="form-label">Country Code</label>
+        <input asp-for="Client.CountryCode" class="form-control" />
+        <span asp-validation-for="Client.CountryCode" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
