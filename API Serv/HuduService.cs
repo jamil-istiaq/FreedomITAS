@@ -16,21 +16,7 @@ namespace FreedomITAS.API_Serv
             _httpClientFactory = httpClientFactory;
             _settings = options.Value;
         }
-
-        //public async Task<JsonElement> GetCompaniesAsync()
-        //{
-        //    var client = _httpClientFactory.CreateClient();
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        //    client.DefaultRequestHeaders.Add("X-API-KEY", _settings.ApiKey);
-
-        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}users");
-        //    response.EnsureSuccessStatusCode();
-
-        //    var json = await response.Content.ReadAsStringAsync();
-        //    using var document = JsonDocument.Parse(json);
-        //    return document.RootElement.Clone();
-        //}
-
+        
         public async Task<HttpResponseMessage> CreateCompanyAsync(object payload)
         {
             var client = _httpClientFactory.CreateClient();

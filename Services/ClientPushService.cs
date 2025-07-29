@@ -9,13 +9,15 @@ public class ClientPushService
     private readonly HuduService _huduService;
     private readonly HaloPSAService _haloPSAService;
     private readonly SyncroService _syncroService;
+    private readonly DreamscapeService _dreamscapeService;
 
-    public ClientPushService(ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService)
+    public ClientPushService(ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, DreamscapeService dreamscapeService  )
     {
         _zomentumService = zomentumService;
         _huduService = huduService;
         _haloPSAService = haloPSAService;
         _syncroService = syncroService;
+        _dreamscapeService = dreamscapeService;
     }
 
     public async Task<Dictionary<string, string>> PushClientAsync(ClientModel client, List<string> systems)
@@ -108,6 +110,25 @@ public class ClientPushService
                     var syncroResponse = await _syncroService.CreateCompanyAsync(syncroPayload);
                     results["Syncro"] = await syncroResponse.Content.ReadAsStringAsync();
                     break;
+
+                //case "Dreamscape":
+                //    var dreamPayload = new
+                //    {
+                //        business_name = client.CompanyLegalName,
+                //        firstname = client.ContactFirstName,
+                //        lastname = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
+                //        email = client.ContactEmail,
+                //        phone = client.CompanyPhone,
+                //        mobile = client.ContactMobile,
+                //        address = client.NumberStreet,
+                //        city = client.City,
+                //        state = client.StateName,
+                //        zip = client.Postcode,
+
+                //    };
+                //    var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
+                //    results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();
+                //    break;
 
                 default:
                     results[system] = "Unsupported system";

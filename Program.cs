@@ -58,6 +58,11 @@ builder.Services.Configure<SyncroSettings>(builder.Configuration.GetSection("Syn
 builder.Services.AddTransient<SyncroService>();
 builder.Services.AddHttpClient();
 
+//Drwamscape
+builder.Services.Configure<DreamscapeSettings>(builder.Configuration.GetSection("Dreamscape"));
+builder.Services.AddTransient<DreamscapeService>();
+builder.Services.AddHttpClient();
+
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<ClientPushService>();
