@@ -114,16 +114,21 @@ public class ClientPushService
                 //case "Dreamscape":
                 //    var dreamPayload = new
                 //    {
-                //        business_name = client.CompanyLegalName,
-                //        firstname = client.ContactFirstName,
-                //        lastname = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
-                //        email = client.ContactEmail,
-                //        phone = client.CompanyPhone,
-                //        mobile = client.ContactMobile,
+                //        username= "admin_",
+                //        first_name = client.ContactFirstName,
+                //        last_name = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
                 //        address = client.NumberStreet,
                 //        city = client.City,
+                //        country = client.Country,
                 //        state = client.StateName,
-                //        zip = client.Postcode,
+                //        post_code = client.Postcode,                        
+                //        phone = client.CompanyPhone,
+                //        mobile = client.ContactMobile,
+                //        email = client.ContactEmail,
+                //        account_type = client.CompanyType,
+                //        business_name = client.CompanyLegalName,
+                //        business_number_type="ABN",
+                //        business_number= client.CompanyABN,
 
                 //    };
                 //    var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);

@@ -82,7 +82,7 @@ namespace FreedomITAS.API_Serv
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             // 4. Send POST request
-            var response = await client.PostAsync($"{_settings.ApiBaseUrl}companies", content);
+            var response = await client.PostAsync($"{_settings.ApiBaseUrl}customers", content);
 
             // 5. Optional: Throw exception on error
             if (!response.IsSuccessStatusCode)
