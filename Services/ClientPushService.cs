@@ -111,29 +111,57 @@ public class ClientPushService
                     results["Syncro"] = await syncroResponse.Content.ReadAsStringAsync();
                     break;
 
-                //case "Dreamscape":
-                //    var dreamPayload = new
-                //    {
-                //        username= "admin_",
-                //        first_name = client.ContactFirstName,
-                //        last_name = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
-                //        address = client.NumberStreet,
-                //        city = client.City,
-                //        country = client.Country,
-                //        state = client.StateName,
-                //        post_code = client.Postcode,                        
-                //        phone = client.CompanyPhone,
-                //        mobile = client.ContactMobile,
-                //        email = client.ContactEmail,
-                //        account_type = client.CompanyType,
-                //        business_name = client.CompanyLegalName,
-                //        business_number_type="ABN",
-                //        business_number= client.CompanyABN,
+                case "Dreamscape":
+                    string companyName = client.CompanyName ?? string.Empty;
+                    string cleaned = new string(companyName.Where(char.IsLetterOrDigit).ToArray()).ToLower();
+                    string shortCode = "xx";
+                    if (cleaned.Length >= 2)
+                    {
+                        char firstLetter = cleaned.FirstOrDefault(char.IsLetter);
+                        char firstDigit = cleaned.FirstOrDefault(char.IsDigit);
+                        if (firstLetter == default) firstLetter = 'x';
+                        if (firstDigit == default) firstDigit = '0';
+                        shortCode = $"{firstLetter}{firstDigit}";
+                    }
+                    string username = $"admin_{shortCode}";
+                    
+                    string rawType = (client.CompanyType ?? "").ToLower();
+                    string accountType;
+                    switch (rawType)
+                    {
+                        case "personal":
+                        case "business":
+                            accountType = rawType;
+                            break;
+                        default:
+                            Console.WriteLine($"[Warning] Unknown company type '{rawType}', defaulting to 'business'");
+                            accountType = "business";
+                            break;
+                    }
+                    var dreamPayload = new
+                    {
+                        username = username,
+                        first_name = client.ContactFirstName,
+                        last_name = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
+                        address = client.NumberStreet,
+                        city = client.City,
+                        country = client.Country,
+                        country_code=client.CountryCode,
+                        state = client.StateName,
+                        post_code = client.Postcode,
+                        phone = client.CompanyPhone,
+                        mobile = client.ContactMobile,
+                        email = client.ContactEmail,
+                        account_type = accountType,
+                        business_name = client.CompanyLegalName,
+                        business_number_type = "ABN",
+                        business_number = client.CompanyABN,
 
-                //    };
-                //    var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
-                //    results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();
-                //    break;
+                    };
+                    var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
+                    results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();                    
+
+                    break;
 
                 default:
                     results[system] = "Unsupported system";
