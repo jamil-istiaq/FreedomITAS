@@ -164,18 +164,19 @@ public class ClientPushService
                     results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();                    
                     break;
 
-                case "Pax8":                    
-                    var pax8Payload = new[]
+                case "Pax8":
+                    string postcode = string.IsNullOrWhiteSpace(client.Postcode) ? "0000" : client.Postcode.Trim();
+                    var pax8Payload = 
                     new
                     {
                         name = client.CompanyName,
-                        compnay_type = client.CompanyType,
+                        company_type = client.CompanyType,
                         address = new
                         {
                             street = client.NumberStreet,
                             city = client.City,
                             stateOrProvince = client.StateName,
-                            postcode = client.Postcode,
+                            postlCode = postcode,
                             country = client.Country
                             
                         },
@@ -187,6 +188,13 @@ public class ClientPushService
                     };
                     var pax8Response = await _pax8Service.CreateClientAsync(pax8Payload);
                     results["Pax8"] = await pax8Response.Content.ReadAsStringAsync();
+                    if (!pax8Response.IsSuccessStatusCode)
+                    {
+                        var error = await pax8Response.Content.ReadAsStringAsync();
+                        Console.WriteLine($"Pax8 Error: {pax8Response.StatusCode} - {error}");
+                        throw new Exception($"Failed to create Pax8 customer: {error}");
+                    }
+
                     break;
 
                 default:
