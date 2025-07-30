@@ -10,14 +10,16 @@ public class ClientPushService
     private readonly HaloPSAService _haloPSAService;
     private readonly SyncroService _syncroService;
     private readonly DreamscapeService _dreamscapeService;
+    private readonly Pax8Service _pax8Service; 
 
-    public ClientPushService(ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, DreamscapeService dreamscapeService  )
+    public ClientPushService(Pax8Service pax8Service, ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, DreamscapeService dreamscapeService  )
     {
         _zomentumService = zomentumService;
         _huduService = huduService;
         _haloPSAService = haloPSAService;
         _syncroService = syncroService;
         _dreamscapeService = dreamscapeService;
+        _pax8Service = pax8Service;
     }
 
     public async Task<Dictionary<string, string>> PushClientAsync(ClientModel client, List<string> systems)
@@ -160,7 +162,31 @@ public class ClientPushService
                     };
                     var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
                     results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();                    
+                    break;
 
+                case "Pax8":                    
+                    var pax8Payload = new[]
+                    new
+                    {
+                        name = client.CompanyName,
+                        compnay_type = client.CompanyType,
+                        address = new
+                        {
+                            street = client.NumberStreet,
+                            city = client.City,
+                            stateOrProvince = client.StateName,
+                            postcode = client.Postcode,
+                            country = client.Country
+                            
+                        },
+                        phone = client.CompanyPhone,
+                        website = client.Website,
+                        billOnBehalfOfEnabled=true,
+                        selfServiceAllowed=true,
+                        orderApprovalRequired = true
+                    };
+                    var pax8Response = await _pax8Service.CreateClientAsync(pax8Payload);
+                    results["Pax8"] = await pax8Response.Content.ReadAsStringAsync();
                     break;
 
                 default:

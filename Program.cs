@@ -62,6 +62,10 @@ builder.Services.Configure<DreamscapeSettings>(builder.Configuration.GetSection(
 builder.Services.AddTransient<DreamscapeService>();
 builder.Services.AddHttpClient();
 
+//Pax8
+builder.Services.Configure<Pax8Settings>(builder.Configuration.GetSection("Pax8"));
+builder.Services.AddTransient<Pax8Service>();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<ClientPushService>();
