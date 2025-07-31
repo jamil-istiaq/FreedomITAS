@@ -19,25 +19,7 @@ namespace FreedomITAS.API_Serv
         {
             _httpClientFactory = httpClientFactory;
             _settings = options.Value;
-        }
-
-        //public async Task<JsonElement> GetClientsAsync()
-        //{
-        //    var client = _httpClientFactory.CreateClient();
-
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-        //    var response = await client.GetAsync($"{_settings.ApiBaseUrl}client/companies");
-        //    response.EnsureSuccessStatusCode();
-
-        //    var json = await response.Content.ReadAsStringAsync();
-
-        //    using var document = JsonDocument.Parse(json);
-
-
-        //    return document.RootElement.Clone();
-        //}
+        }        
 
         public async Task<string> RefreshAccessTokenAsync()
         {
@@ -79,10 +61,7 @@ namespace FreedomITAS.API_Serv
             return await client.PostAsync($"{_settings.ApiBaseUrl.TrimEnd('/')}/client/companies", content);
         }
         public async Task<string> CreateClientAsync(object clientPayload)
-        {
-            //var client = _httpClientFactory.CreateClient();
-            //client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
-
+        {            
             var response = await PostToZomentumAsync(clientPayload, _settings.AccessToken);
 
             if (response.StatusCode == HttpStatusCode.Unauthorized)
@@ -96,24 +75,9 @@ namespace FreedomITAS.API_Serv
             return response.IsSuccessStatusCode
                 ? "Client created successfully in Zomentum."
                 : $"Error creating client: {content}";
-
-            //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            //var json = JsonSerializer.Serialize(clientPayload);
-            //var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-            //var response = await client.PostAsync($"{_settings.ApiBaseUrl}client/companies", content);
-
-            //if (response.IsSuccessStatusCode)
-            //{
-            //    return "Client created successfully in Zomentum.";
-            //}
-            //else
-            //{
-            //    var error = await response.Content.ReadAsStringAsync();
-            //    return $"Error creating client: {error}";
-            //}
+           
         }
+
     }
 }
 

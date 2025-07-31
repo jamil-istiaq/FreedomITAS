@@ -49,8 +49,8 @@ public class ClientPushService
                         website=client.Website,
 
                     };
-                    results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);
-                    break;
+                    results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);                    
+                    break;                   
 
                 case "HaloPSA":
                     var haloPayload = new[] {
