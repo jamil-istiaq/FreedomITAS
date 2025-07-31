@@ -46,6 +46,13 @@ namespace FreedomITAS.Models
 
         public string ContactMobile { get; set; }
 
+        public string? HaloId { get; set; }
+        public string? HuduId { get; set; }
+        public string? ZomentumId { get; set; }
+        public string? SyncroId { get; set; }
+        public string? Pax8Id { get; set; }
+        public string? DreamScapeId { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
     

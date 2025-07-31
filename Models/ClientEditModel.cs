@@ -44,6 +44,12 @@ namespace FreedomITAS.Models
 
         [Required, EmailAddress]
         public string ContactEmail { get; set; }
+        public string? HaloId { get; set; }
+        public string? HuduId { get; set; }
+        public string? ZomentumId { get; set; }
+        public string? SyncroId { get; set; }
+        public string? Pax8Id { get; set; }
+        public string? DreamScapeId { get; set; }
 
         public string? ContactMobile { get; set; }
 

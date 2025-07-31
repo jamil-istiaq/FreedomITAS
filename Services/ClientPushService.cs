@@ -176,7 +176,7 @@ public class ClientPushService
                             street = client.NumberStreet,
                             city = client.City,
                             stateOrProvince = client.StateName,
-                            postlCode = postcode,
+                            postalCode = postcode,
                             country = client.Country
                             
                         },
@@ -188,6 +188,9 @@ public class ClientPushService
                     };
                     var pax8Response = await _pax8Service.CreateClientAsync(pax8Payload);
                     results["Pax8"] = await pax8Response.Content.ReadAsStringAsync();
+                    var resultJson = await pax8Response.Content.ReadAsStringAsync();
+                    Console.WriteLine("Pax8 API Create Response:\n" + resultJson);
+
                     if (!pax8Response.IsSuccessStatusCode)
                     {
                         var error = await pax8Response.Content.ReadAsStringAsync();
