@@ -73,8 +73,12 @@ public class ClientPushService
                         newclient_contactemail =client.ContactEmail
                     }
                     };
-                    var response = await _haloPSAService.CreateClientAsync(haloPayload);
-                    results["HaloPSA"] = await response.Content.ReadAsStringAsync(); ;
+                    //var response = await _haloPSAService.CreateClientAsync(haloPayload);
+                    //results["HaloPSA"] = await response.Content.ReadAsStringAsync(); ;
+                    //break;
+                    var clientId = await _haloPSAService.CreateClientAsync(haloPayload);
+                    client.HaloId = clientId; // Save to your DB if possible
+                    results["HaloPSA"] = $"Client created with ID: {clientId}";
                     break;
 
                 case "Hudu":
