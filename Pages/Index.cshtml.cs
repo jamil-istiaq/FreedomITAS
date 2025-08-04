@@ -1,19 +1,20 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using FreedomITAS.Models;
-using FreedomITAS.Data;
-using Newtonsoft.Json.Linq;
 using FreedomITAS.API_Serv;
+using FreedomITAS.Data;
+using FreedomITAS.Models;
+using FreedomITAS.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
 using System.Text.Json;
+using System.Threading.Tasks;
 
 namespace FreedomITAS.Pages
 {
     public class IndexModel : PageModel
     {
-        private readonly ClientPushService _clientPushService;
+        private readonly ClientCreateService _clientCreateService;
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
 
@@ -30,11 +31,11 @@ namespace FreedomITAS.Pages
         public IList<ClientModel> Clients { get; set; }
         public Dictionary<string, string> EncryptedIds { get; set; }
 
-        public IndexModel(AppDbContext context, RouteProtector protector, ClientPushService clientPushService)
+        public IndexModel(AppDbContext context, RouteProtector protector, ClientCreateService clientCreateService)
         {
             _context = context;
             _protector = protector;
-            _clientPushService = clientPushService;
+            _clientCreateService = clientCreateService;
         }
 
 
@@ -95,7 +96,7 @@ namespace FreedomITAS.Pages
 
             try
             {
-                var results = await _clientPushService.PushClientAsync(client, SelectedSource);
+                var results = await _clientCreateService.CreateClientAsync(client, SelectedSource);
 
                 foreach (var result in results)
                 {

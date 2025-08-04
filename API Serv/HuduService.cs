@@ -28,5 +28,29 @@ namespace FreedomITAS.API_Serv
 
             return await client.PostAsync($"{_settings.ApiBaseUrl}companies", content);
         }
+        public async Task<HttpResponseMessage> UpdateCompanyAsync(string companyId, object payload)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("X-API-KEY", _settings.ApiKey);
+
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json);
+            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+
+            var response = await client.PutAsync($"{_settings.ApiBaseUrl}/companies/{companyId}", content);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteCompanyAsync(string companyId)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Add("X-API-KEY", _settings.ApiKey);
+
+            var response = await client.DeleteAsync($"{_settings.ApiBaseUrl}/companies/{companyId}");
+            return response;
+        }
+
     }
 }
