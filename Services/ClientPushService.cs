@@ -10,9 +10,11 @@ public class ClientPushService
     private readonly HaloPSAService _haloPSAService;
     private readonly SyncroService _syncroService;
     private readonly DreamscapeService _dreamscapeService;
-    private readonly Pax8Service _pax8Service; 
+    private readonly Pax8Service _pax8Service;
+    private readonly GoHighLevelService _highLevelService;
 
-    public ClientPushService(Pax8Service pax8Service, ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, DreamscapeService dreamscapeService  )
+    public ClientPushService(Pax8Service pax8Service, ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, 
+        DreamscapeService dreamscapeService, GoHighLevelService goHighLevelService )
     {
         _zomentumService = zomentumService;
         _huduService = huduService;
@@ -20,6 +22,7 @@ public class ClientPushService
         _syncroService = syncroService;
         _dreamscapeService = dreamscapeService;
         _pax8Service = pax8Service;
+        _highLevelService = goHighLevelService;
     }
 
     public async Task<Dictionary<string, string>> PushClientAsync(ClientModel client, List<string> systems)
@@ -73,7 +76,7 @@ public class ClientPushService
                         newclient_contactemail =client.ContactEmail
                     }
                     };
-                    //var response = await _haloPSAService.CreateClientAsync(haloPayload);
+                    var response = await _haloPSAService.CreateClientAsync(haloPayload);
                     //results["HaloPSA"] = await response.Content.ReadAsStringAsync(); ;
                     //break;
                     var clientId = await _haloPSAService.CreateClientAsync(haloPayload);
@@ -203,6 +206,45 @@ public class ClientPushService
                     }
 
                     break;
+
+                case "HighLevel":                    
+                    var GHLPayload =
+                    new
+                    {
+                        firstName = client.ContactFirstName,
+                        lastName = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
+                        companyName= client.CompanyName,
+                        email = client.ContactEmail,
+                        locationId= "aLgWjwsNm8ALxmFjkeu6",                        
+                        phone = client.CompanyPhone,
+                        address1 =client.NumberStreet,                                              
+                        city = client.City,
+                        state = client.StateName,                           
+                        postalCode = client.Postcode,
+                        website = client.Website,
+                        customFields= new[] {
+                        new {
+                            id="aLgWjwsNm8ALxmFjkeu6",
+                                 
+                        }
+                        }
+
+                    };
+                    var GHLResponse = await _highLevelService.CreateContactAsync(GHLPayload);
+                    results["HighLevel"] = GHLResponse;
+
+                    Console.WriteLine("HighLevel API Create Response: Contact ID = " + GHLResponse);
+                    break;
+                    //resultJson = await GHLResponse.Content.ReadAsStringAsync();
+                    //results["HighLevel"] = resultJson;
+
+                    //Console.WriteLine("HighLevel API Create Response:\n" + resultJson);
+
+                    //if (!GHLResponse.IsSuccessStatusCode)
+                    //{
+                    //    throw new Exception($"Failed to create HighLevel contact: {GHLResponse.StatusCode} - {resultJson}");
+                    //}
+                    //break;
 
                 default:
                     results[system] = "Unsupported system";

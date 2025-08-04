@@ -67,6 +67,12 @@ builder.Services.Configure<Pax8Settings>(builder.Configuration.GetSection("Pax8"
 builder.Services.AddTransient<Pax8Service>();
 builder.Services.AddHttpClient();
 
+//HighLevel
+builder.Services.Configure<GoHighLevelSettings>(builder.Configuration.GetSection("HighLevel"));
+builder.Services.AddTransient<GoHighLevelService>();
+builder.Services.AddHttpClient();
+
+
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
 builder.Services.AddScoped<ClientPushService>();
 

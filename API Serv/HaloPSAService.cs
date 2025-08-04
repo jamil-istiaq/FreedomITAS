@@ -38,22 +38,7 @@ namespace FreedomITAS
             var token = doc.RootElement.GetProperty("access_token").GetString();            
             return token;
         }
-
-
-        //public async Task<HttpResponseMessage> CreateClientAsync(object payload)
-        //{
-
-        //    var token = await GetAccessTokenAsync();
-        //    var client = _httpClientFactory.CreateClient();
-        //    client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-        //    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-
-        //    var content = new StringContent(JsonSerializer.Serialize(payload));
-        //    content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-        //    return await client.PostAsync($"{_settings.ApiBaseUrl}Client", content);
-        //}
+        
         public async Task<string> CreateClientAsync(object payload)
         {
             var token = await GetAccessTokenAsync();
