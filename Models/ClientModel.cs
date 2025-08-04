@@ -52,6 +52,7 @@ namespace FreedomITAS.Models
         public string? SyncroId { get; set; }
         public string? Pax8Id { get; set; }
         public string? DreamScapeId { get; set; }
+        public string? HighLevelId { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

@@ -1,7 +1,9 @@
-﻿using System.Text.Json;
-using FreedomITAS.Models;
+﻿using FreedomITAS;
 using FreedomITAS.API_Serv;
-using FreedomITAS;
+using FreedomITAS.Data;
+using FreedomITAS.Models;
+using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 public class ClientPushService
 {
@@ -12,9 +14,10 @@ public class ClientPushService
     private readonly DreamscapeService _dreamscapeService;
     private readonly Pax8Service _pax8Service;
     private readonly GoHighLevelService _highLevelService;
+    private readonly AppDbContext _dbContext;
 
     public ClientPushService(Pax8Service pax8Service, ZomentumService zomentumService, HuduService huduService, HaloPSAService haloPSAService, SyncroService syncroService, 
-        DreamscapeService dreamscapeService, GoHighLevelService goHighLevelService )
+        DreamscapeService dreamscapeService, GoHighLevelService goHighLevelService, AppDbContext dbContext )
     {
         _zomentumService = zomentumService;
         _huduService = huduService;
@@ -23,6 +26,13 @@ public class ClientPushService
         _dreamscapeService = dreamscapeService;
         _pax8Service = pax8Service;
         _highLevelService = goHighLevelService;
+        _dbContext = dbContext;
+    }
+    private async Task<string> ExtractIdFromResponse(HttpResponseMessage response)
+    {
+        var json = await response.Content.ReadAsStringAsync();
+        using var doc = JsonDocument.Parse(json);
+        return doc.RootElement.GetProperty("id").GetInt32().ToString();
     }
 
     public async Task<Dictionary<string, string>> PushClientAsync(ClientModel client, List<string> systems)
@@ -52,7 +62,12 @@ public class ClientPushService
                         website=client.Website,
 
                     };
-                    results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);                    
+                    //results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);                    
+                    var Zomentumresponse = await _zomentumService.CreateClientAsync(zomentumPayload);
+                    var ZomentumId = await _zomentumService.CreateClientAsync(zomentumPayload);
+                    client.ZomentumId = ZomentumId;
+                    await _dbContext.SaveChangesAsync();
+                    results["Zomentum"] = ZomentumId;
                     break;                   
 
                 case "HaloPSA":
@@ -76,12 +91,11 @@ public class ClientPushService
                         newclient_contactemail =client.ContactEmail
                     }
                     };
-                    var response = await _haloPSAService.CreateClientAsync(haloPayload);
-                    //results["HaloPSA"] = await response.Content.ReadAsStringAsync(); ;
-                    //break;
-                    var clientId = await _haloPSAService.CreateClientAsync(haloPayload);
-                    client.HaloId = clientId; // Save to your DB if possible
-                    results["HaloPSA"] = $"Client created with ID: {clientId}";
+                    var Haloresponse = await _haloPSAService.CreateClientAsync(haloPayload);                   
+                    var HaloId = await _haloPSAService.CreateClientAsync(haloPayload);
+                    client.HaloId = HaloId;
+                    await _dbContext.SaveChangesAsync();
+                    results["HaloPSA"] = HaloId;
                     break;
 
                 case "Hudu":
@@ -98,7 +112,10 @@ public class ClientPushService
                         website = client.Website
                     };
                     var huduResponse = await _huduService.CreateCompanyAsync(huduPayload);
-                    results["Hudu"] = await huduResponse.Content.ReadAsStringAsync();
+                    var huduId = await ExtractIdFromResponse(huduResponse); ;
+                    client.HuduId = huduId;
+                    await _dbContext.SaveChangesAsync();
+                    results["Hudu"] = huduId;
                     break;
 
                 case "Syncro":
@@ -117,7 +134,10 @@ public class ClientPushService
                        
                     };
                     var syncroResponse = await _syncroService.CreateCompanyAsync(syncroPayload);
-                    results["Syncro"] = await syncroResponse.Content.ReadAsStringAsync();
+                    var syncroId = await ExtractIdFromResponse(syncroResponse);
+                    client.SyncroId = syncroId;
+                    await _dbContext.SaveChangesAsync();
+                    results["Syncro"] = syncroId;
                     break;
 
                 case "Dreamscape":
@@ -168,7 +188,10 @@ public class ClientPushService
 
                     };
                     var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
-                    results["Dreamscape"] = await dreamResponse.Content.ReadAsStringAsync();                    
+                    var dreamId = await ExtractIdFromResponse(dreamResponse);
+                    client.DreamScapeId = dreamId;
+                    await _dbContext.SaveChangesAsync();
+                    results["Dreamscape"] = dreamId;                    
                     break;
 
                 case "Pax8":
@@ -230,21 +253,13 @@ public class ClientPushService
                         }
 
                     };
-                    var GHLResponse = await _highLevelService.CreateContactAsync(GHLPayload);
-                    results["HighLevel"] = GHLResponse;
-
-                    Console.WriteLine("HighLevel API Create Response: Contact ID = " + GHLResponse);
+                    var GHLResponse = await _highLevelService.CreateContactAsync(GHLPayload);                    
+                    var GHLId = await _highLevelService.CreateContactAsync(GHLPayload);
+                    client.HighLevelId = GHLId;
+                    await _dbContext.SaveChangesAsync();
+                    results["HighLevel"] = GHLId;
                     break;
-                    //resultJson = await GHLResponse.Content.ReadAsStringAsync();
-                    //results["HighLevel"] = resultJson;
 
-                    //Console.WriteLine("HighLevel API Create Response:\n" + resultJson);
-
-                    //if (!GHLResponse.IsSuccessStatusCode)
-                    //{
-                    //    throw new Exception($"Failed to create HighLevel contact: {GHLResponse.StatusCode} - {resultJson}");
-                    //}
-                    //break;
 
                 default:
                     results[system] = "Unsupported system";
