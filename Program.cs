@@ -1,10 +1,11 @@
 using FreedomITAS;
-using FreedomITAS.Data;
-using Microsoft.EntityFrameworkCore;
-using FreedomITAS.Models;
-using FreedomITAS.API_Settings;
 using FreedomITAS.API_Serv;
+using FreedomITAS.API_Settings;
+using FreedomITAS.Data;
+using FreedomITAS.Models;
+using FreedomITAS.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 //using FreedomITAS.Services;
 
@@ -74,7 +75,10 @@ builder.Services.AddHttpClient();
 
 
 builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomUserClaimsPrincipalFactory>();
-builder.Services.AddScoped<ClientPushService>();
+builder.Services.AddScoped<ClientCreateService>();
+builder.Services.AddScoped<ClientUpdateService>();
+builder.Services.AddScoped<ClientDeleteService>();
+//builder.Services.AddScoped<ClientPushService>();
 
 
 builder.Services.AddRazorPages(options =>
