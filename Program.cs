@@ -78,7 +78,7 @@ builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomU
 builder.Services.AddScoped<ClientCreateService>();
 builder.Services.AddScoped<ClientUpdateService>();
 builder.Services.AddScoped<ClientDeleteService>();
-builder.Services.AddControllersWithViews(); 
+//builder.Services.AddControllersWithViews(); 
 
 
 builder.Services.AddRazorPages(options =>
@@ -104,10 +104,10 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers(); 
-});
+//app.UseEndpoints(endpoints =>
+//{
+//    endpoints.MapControllers(); 
+//});
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
