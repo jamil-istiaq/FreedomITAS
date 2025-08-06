@@ -54,7 +54,7 @@ namespace FreedomITAS.API_Serv
             }
         }
 
-        public async Task<string> CreateContactAsync(object payload)
+        public async Task<HttpResponseMessage> CreateContactAsync(object payload)
         {
             var token = await GetAccessTokenAsync();
             var client = _httpClientFactory.CreateClient();
@@ -67,13 +67,15 @@ namespace FreedomITAS.API_Serv
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
 
             var response = await client.PostAsync($"{_settings.ApiBaseUrl}contacts", content);
+            
             var responseContent = await response.Content.ReadAsStringAsync();
 
             if (!response.IsSuccessStatusCode)
                 throw new Exception($"Failed to create contact: {response.StatusCode} - {responseContent}");
 
             using var doc = JsonDocument.Parse(responseContent);
-            return doc.RootElement.GetProperty("id").GetString();
+            return response;
+            //return doc.RootElement.GetProperty("id").GetString();
         }
         
     }

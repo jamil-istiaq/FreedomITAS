@@ -1,4 +1,5 @@
-﻿using FreedomITAS.API_Serv;
+﻿using Azure;
+using FreedomITAS.API_Serv;
 using FreedomITAS.Data;
 using FreedomITAS.Models;
 using System.Text.Json;
@@ -36,12 +37,59 @@ namespace FreedomITAS.Services
             _dbContext = dbContext;
         }
 
+        //private async Task<string> ExtractIdFromResponse(HttpResponseMessage response)
+        //{
+        //    var json = await response.Content.ReadAsStringAsync();
+        //    using var doc = JsonDocument.Parse(json);
+        //    return doc.RootElement.GetProperty("id").GetInt32().ToString();
+        //}
         private async Task<string> ExtractIdFromResponse(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(json);
-            return doc.RootElement.GetProperty("id").GetInt32().ToString();
+
+            try
+            {
+                using var doc = JsonDocument.Parse(json);
+                //DreamscapeID
+                if (doc.RootElement.TryGetProperty("data", out var dataElement) &&
+                    dataElement.TryGetProperty("id", out var dreamscapeId))
+                {
+                    return dreamscapeId.GetInt32().ToString();
+                }
+
+                //SyncroID
+                if (doc.RootElement.TryGetProperty("customer", out var customerElement) &&
+                    customerElement.TryGetProperty("id", out var customerId))
+                {
+                    return customerId.GetInt32().ToString();
+                }
+
+                // HuduID
+                if (doc.RootElement.TryGetProperty("company", out var companyElement) &&
+                    companyElement.TryGetProperty("id", out var idElement))
+                {
+                    return idElement.GetInt32().ToString();
+                }
+
+                // For other APIs
+                if (doc.RootElement.TryGetProperty("id", out var rootId))
+                    return rootId.GetInt32().ToString();
+
+                //GoHighLevelID
+                if (doc.RootElement.TryGetProperty("contact", out var contactElement) &&
+                    contactElement.TryGetProperty("id", out var contactId))
+                {
+                    return contactId.GetString();
+                }
+
+                throw new Exception($"ID not found in API response. Raw JSON: {json}");
+            }
+            catch (JsonException jex)
+            {
+                throw new Exception($"Invalid JSON returned in response: {jex.Message}\n\nRaw response: {json}");
+            }
         }
+
 
         public async Task<Dictionary<string, string>> CreateClientAsync(ClientModel client, List<string> systems)
         {
@@ -69,17 +117,16 @@ namespace FreedomITAS.Services
                             compnay_types = client.CompanyType,
                             website = client.Website,
 
-                        };
-                        //results["Zomentum"] = await _zomentumService.CreateClientAsync(zomentumPayload);                    
+                        };                                          
                         var Zomentumresponse = await _zomentumService.CreateClientAsync(zomentumPayload);
-                        var ZomentumId = await _zomentumService.CreateClientAsync(zomentumPayload);
+                        var ZomentumId = await ExtractIdFromResponse(Zomentumresponse);
                         client.ZomentumId = ZomentumId;
-                        await _dbContext.SaveChangesAsync();
-                        results["Zomentum"] = ZomentumId;
+                        await _dbContext.SaveChangesAsync();                        
                         break;
 
                     case "HaloPSA":
-                        var haloPayload = new[] {
+                        
+                            var haloPayload = new[] {
                     new
                     {
                         name = client.CompanyName,
@@ -99,12 +146,13 @@ namespace FreedomITAS.Services
                         newclient_contactemail =client.ContactEmail
                     }
                     };
-                        var Haloresponse = await _haloPSAService.CreateClientAsync(haloPayload);
-                        var HaloId = await _haloPSAService.CreateClientAsync(haloPayload);
-                        client.HaloId = HaloId;
-                        await _dbContext.SaveChangesAsync();
-                        results["HaloPSA"] = HaloId;
-                        break;
+                            var Haloresponse = await _haloPSAService.CreateClientAsync(haloPayload);                                                       
+                            var content = await Haloresponse.Content.ReadAsStringAsync();                            
+                            var HaloId = await ExtractIdFromResponse(Haloresponse);
+                            client.HaloId = HaloId;
+                            await _dbContext.SaveChangesAsync();                            
+                            break;
+                        
 
                     case "Hudu":
                         var huduPayload = new
@@ -120,10 +168,10 @@ namespace FreedomITAS.Services
                             website = client.Website
                         };
                         var huduResponse = await _huduService.CreateCompanyAsync(huduPayload);
-                        var huduId = await ExtractIdFromResponse(huduResponse); ;
-                        client.HuduId = huduId;
-                        await _dbContext.SaveChangesAsync();
-                        results["Hudu"] = huduId;
+                        var HuduId = await ExtractIdFromResponse(huduResponse);
+                        var json = await huduResponse.Content.ReadAsStringAsync();
+                        client.HuduId = HuduId;
+                        await _dbContext.SaveChangesAsync();                        
                         break;
 
                     case "Syncro":
@@ -142,10 +190,10 @@ namespace FreedomITAS.Services
 
                         };
                         var syncroResponse = await _syncroService.CreateCompanyAsync(syncroPayload);
-                        var syncroId = await ExtractIdFromResponse(syncroResponse);
-                        client.SyncroId = syncroId;
+                        var SyncroId = await ExtractIdFromResponse(syncroResponse);
+                        client.SyncroId = SyncroId;
                         await _dbContext.SaveChangesAsync();
-                        results["Syncro"] = syncroId;
+                        //results["Syncro"] = SyncroId;
                         break;
 
                     case "Dreamscape":
@@ -170,8 +218,7 @@ namespace FreedomITAS.Services
                             case "business":
                                 accountType = rawType;
                                 break;
-                            default:
-                                Console.WriteLine($"[Warning] Unknown company type '{rawType}', defaulting to 'business'");
+                            default:                                
                                 accountType = "business";
                                 break;
                         }
@@ -196,10 +243,15 @@ namespace FreedomITAS.Services
 
                         };
                         var dreamResponse = await _dreamscapeService.CreateCompanyAsync(dreamPayload);
-                        var dreamId = await ExtractIdFromResponse(dreamResponse);
-                        client.DreamScapeId = dreamId;
-                        await _dbContext.SaveChangesAsync();
-                        results["Dreamscape"] = dreamId;
+                        if (!dreamResponse.IsSuccessStatusCode)
+                        {
+                            var error = await dreamResponse.Content.ReadAsStringAsync();
+                            Console.WriteLine($"Dreamscape Error: {dreamResponse.StatusCode} - {error}");
+                            throw new Exception($"Failed to create Dreamscape customer: {error}");
+                        }
+                        var DreamScapeId = await ExtractIdFromResponse(dreamResponse);
+                        client.DreamScapeId = DreamScapeId;
+                        await _dbContext.SaveChangesAsync();                        
                         break;
 
                     case "Pax8":
@@ -256,16 +308,13 @@ namespace FreedomITAS.Services
                             customFields = new[] {
                         new {
                             id="aLgWjwsNm8ALxmFjkeu6",
-
+                            }                          
                         }
-                            }
-
                         };
                         var GHLResponse = await _highLevelService.CreateContactAsync(GHLPayload);
-                        var GHLId = await _highLevelService.CreateContactAsync(GHLPayload);
-                        client.HighLevelId = GHLId;
-                        await _dbContext.SaveChangesAsync();
-                        results["HighLevel"] = GHLId;
+                        var HighLevelId = await ExtractIdFromResponse(GHLResponse); ;
+                        client.HighLevelId = HighLevelId;
+                        await _dbContext.SaveChangesAsync();                        
                         break;
 
 

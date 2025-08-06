@@ -60,7 +60,7 @@ namespace FreedomITAS.API_Serv
 
             return await client.PostAsync($"{_settings.ApiBaseUrl.TrimEnd('/')}/client/companies", content);
         }
-        public async Task<string> CreateClientAsync(object clientPayload)
+        public async Task<HttpResponseMessage> CreateClientAsync(object clientPayload)
         {            
             var response = await PostToZomentumAsync(clientPayload, _settings.AccessToken);
 
@@ -71,10 +71,11 @@ namespace FreedomITAS.API_Serv
                 response = await PostToZomentumAsync(clientPayload, newAccessToken);
             }
 
-            var content = await response.Content.ReadAsStringAsync();
-            return response.IsSuccessStatusCode
-                ? "Client created successfully in Zomentum."
-                : $"Error creating client: {content}";
+            //var content = await response.Content.ReadAsStringAsync();
+            return response;
+                //IsSuccessStatusCode
+                //? "Client created successfully in Zomentum."
+                //: $"Error creating client: {content}";
            
         }
 

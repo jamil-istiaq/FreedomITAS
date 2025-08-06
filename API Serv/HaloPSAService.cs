@@ -39,7 +39,7 @@ namespace FreedomITAS
             return token;
         }
         
-        public async Task<string> CreateClientAsync(object payload)
+        public async Task<HttpResponseMessage> CreateClientAsync(object payload)
         {
             var token = await GetAccessTokenAsync();
             var client = _httpClientFactory.CreateClient();
@@ -48,18 +48,8 @@ namespace FreedomITAS
 
             var content = new StringContent(JsonSerializer.Serialize(payload));
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
-
-            var response = await client.PostAsync($"{_settings.ApiBaseUrl}Client", content);
-            var responseContent = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
-            {
-                throw new Exception($"Failed to create client: {response.StatusCode} - {responseContent}");
-            }
-
-            using var doc = JsonDocument.Parse(responseContent);
-            var clientId = doc.RootElement.GetProperty("id").GetRawText(); 
-            return clientId;
+            
+            return await client.PostAsync($"{_settings.ApiBaseUrl}client", content);            
         }
 
 
