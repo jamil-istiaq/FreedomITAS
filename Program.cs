@@ -78,7 +78,7 @@ builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomU
 builder.Services.AddScoped<ClientCreateService>();
 builder.Services.AddScoped<ClientUpdateService>();
 builder.Services.AddScoped<ClientDeleteService>();
-//builder.Services.AddScoped<ClientPushService>();
+builder.Services.AddControllersWithViews(); 
 
 
 builder.Services.AddRazorPages(options =>
@@ -104,6 +104,11 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers(); 
+});
+
 app.UseCookiePolicy(new CookiePolicyOptions
 {
     MinimumSameSitePolicy = SameSiteMode.Lax,
@@ -118,35 +123,35 @@ app.UseAuthorization();
 app.MapRazorPages();
 
 
-using (var scope = app.Services.CreateScope())
-{
-    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
-    var userEmail = "jamil@freedomit.com.au";
-    var userPassword = "L#fz$6$E4UirjF";
+//using (var scope = app.Services.CreateScope())
+//{
+//    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+//    var userEmail = "jamil@freedomit.com.au";
+//    var userPassword = "L#fz$6$E4UirjF";
 
 
-    var user = await userManager.FindByEmailAsync(userEmail);
-    if (user == null)
-    {
-        var newUser = new ApplicationUser
+//    var user = await userManager.FindByEmailAsync(userEmail);
+//    if (user == null)
+//    {
+//        var newUser = new ApplicationUser
 
-        {
-            UserName = userEmail,
-            Email = userEmail,
-            EmailConfirmed = true,// optional but helps avoid issues
-            FullName = "Jamil Istiaq",
-            Role = "Admin"
-        };
+//        {
+//            UserName = userEmail,
+//            Email = userEmail,
+//            EmailConfirmed = true,// optional but helps avoid issues
+//            FullName = "Jamil Istiaq",
+//            Role = "Admin"
+//        };
 
-        var result = await userManager.CreateAsync(newUser, userPassword);
+//        var result = await userManager.CreateAsync(newUser, userPassword);
 
-        if (!result.Succeeded)
-        {
-            foreach (var error in result.Errors)
-            {
-                Console.WriteLine($"Error creating user: {error.Description}");
-            }
-        }
-    }
-}
+//        if (!result.Succeeded)
+//        {
+//            foreach (var error in result.Errors)
+//            {
+//                Console.WriteLine($"Error creating user: {error.Description}");
+//            }
+//        }
+//    }
+//}
 app.Run();

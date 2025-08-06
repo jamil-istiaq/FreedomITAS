@@ -77,6 +77,34 @@ namespace FreedomITAS.API_Serv
             return response;
             //return doc.RootElement.GetProperty("id").GetString();
         }
-        
+
+        public async Task ExchangeCodeForTokensAsync(string code)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            var form = new Dictionary<string, string>
+            {
+                { "grant_type", "authorization_code" },
+                { "client_id", _settings.ClientId },
+                { "client_secret", _settings.ClientSecret },
+                { "redirect_uri", "https://app.freedomit.com.au/oauth/callback" },
+                { "code", code }
+            };
+
+            var response = await client.PostAsync(_settings.TokenUrl, new FormUrlEncodedContent(form));
+            var content = await response.Content.ReadAsStringAsync();
+
+            if (!response.IsSuccessStatusCode)
+                throw new Exception($"Failed to exchange code: {response.StatusCode} - {content}");
+
+            using var doc = JsonDocument.Parse(content);
+            var accessToken = doc.RootElement.GetProperty("access_token").GetString();
+            var refreshToken = doc.RootElement.GetProperty("refresh_token").GetString();
+            var expiresIn = doc.RootElement.GetProperty("expires_in").GetInt32();
+
+            await _tokenStorage.SaveTokensAsync(accessToken!, refreshToken!, expiresIn);
+        }
+
+
     }
 }
