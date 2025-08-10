@@ -78,8 +78,9 @@ builder.Services.AddScoped<IUserClaimsPrincipalFactory<ApplicationUser>, CustomU
 builder.Services.AddScoped<ClientCreateService>();
 builder.Services.AddScoped<ClientUpdateService>();
 builder.Services.AddScoped<ClientDeleteService>();
-//builder.Services.AddControllersWithViews(); 
-
+builder.Services.AddSingleton<TokenStorageService>();
+builder.Services.AddControllersWithViews();
+builder.Services.AddControllers();
 
 builder.Services.AddRazorPages(options =>
 {
@@ -104,10 +105,6 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseRouting();
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapControllers(); 
-//});
 
 app.UseCookiePolicy(new CookiePolicyOptions
 {
@@ -120,7 +117,12 @@ app.UseCookiePolicy();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapRazorPages();
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapControllers();
+    endpoints.MapRazorPages();
+});
+
 
 
 //using (var scope = app.Services.CreateScope())

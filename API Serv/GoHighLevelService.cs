@@ -10,11 +10,11 @@ namespace FreedomITAS.API_Serv
         private readonly GoHighLevelSettings _settings;
         private readonly TokenStorageService _tokenStorage;
 
-        public GoHighLevelService(IHttpClientFactory httpClientFactory, IOptions<GoHighLevelSettings> settings)
+        public GoHighLevelService(IHttpClientFactory httpClientFactory, IOptions<GoHighLevelSettings> settings, TokenStorageService tokenStorage)
         {
             _httpClientFactory = httpClientFactory;
             _settings = settings.Value;
-            _tokenStorage = new TokenStorageService();
+            _tokenStorage = tokenStorage;
         }
         public async Task<string> GetAccessTokenAsync()
         {

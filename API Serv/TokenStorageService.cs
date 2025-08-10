@@ -1,38 +1,60 @@
-﻿
-using System.Text.Json;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Hosting;
 
 namespace FreedomITAS.API_Serv
 {
     public class TokenStorageService
     {
-        private const string TokenFilePath = "Data/TokenStore.json";
+        private readonly string _tokenFilePath;
+
+        public TokenStorageService(IHostEnvironment env)
+        {
+            // Running on Azure App Service?
+            var home = Environment.GetEnvironmentVariable("HOME"); // set on Azure
+            if (!string.IsNullOrEmpty(home))
+            {
+                _tokenFilePath = Path.Combine(home, "site", "wwwroot", "Data", "TokenStore.json");
+            }
+            else
+            {
+                // local/dev fallback
+                _tokenFilePath = Path.Combine(env.ContentRootPath, "Data", "TokenStore.json");
+            }
+        }
 
         public async Task<(string AccessToken, string RefreshToken, DateTime ExpiresAt)> LoadTokensAsync()
         {
-            if (!File.Exists(TokenFilePath))
-                throw new FileNotFoundException("Token storage file not found.");
+            if (!File.Exists(_tokenFilePath))
+                throw new FileNotFoundException("Token storage file not found at: " + _tokenFilePath);
 
-            var json = await File.ReadAllTextAsync(TokenFilePath);
-            var doc = JsonDocument.Parse(json);
+            var json = await File.ReadAllTextAsync(_tokenFilePath);
+            using var doc = JsonDocument.Parse(json);
+
             var accessToken = doc.RootElement.GetProperty("access_token").GetString();
             var refreshToken = doc.RootElement.GetProperty("refresh_token").GetString();
-            var expiresAt = doc.RootElement.GetProperty("expires_at").GetDateTime();
+            var expiresAtStr = doc.RootElement.GetProperty("expires_at").GetString();
+
+            if (!DateTime.TryParse(expiresAtStr, out var expiresAt))
+                throw new Exception("expires_at is not a valid ISO-8601 datetime: " + expiresAtStr);
 
             return (accessToken!, refreshToken!, expiresAt);
         }
 
         public async Task SaveTokensAsync(string accessToken, string refreshToken, int expiresInSeconds)
         {
+            var dir = Path.GetDirectoryName(_tokenFilePath)!;
+            Directory.CreateDirectory(dir);
+
             var data = new
             {
                 access_token = accessToken,
                 refresh_token = refreshToken,
-                expires_at = DateTime.UtcNow.AddSeconds(expiresInSeconds - 60) // buffer
+                // refresh 1 minute early
+                expires_at = DateTime.UtcNow.AddSeconds(Math.Max(0, expiresInSeconds - 60)).ToString("o")
             };
 
             var json = JsonSerializer.Serialize(data, new JsonSerializerOptions { WriteIndented = true });
-            Directory.CreateDirectory(Path.GetDirectoryName(TokenFilePath)!);
-            await File.WriteAllTextAsync(TokenFilePath, json);
+            await File.WriteAllTextAsync(_tokenFilePath, json);
         }
     }
 }
