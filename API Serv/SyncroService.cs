@@ -29,5 +29,14 @@ namespace FreedomITAS.API_Serv
 
             return await client.PostAsync($"{_settings.ApiBaseUrl}/customers", content);
         }
+
+        public async Task<HttpResponseMessage> UpdateCustomerAsync(string id, object payload)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var json = JsonSerializer.Serialize(payload);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var req = new HttpRequestMessage(HttpMethod.Put, $"{_settings.ApiBaseUrl}/customers/{id}") { Content = content };
+            return await client.SendAsync(req);
+        }
     }
 }

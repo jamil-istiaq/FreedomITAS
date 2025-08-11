@@ -1,7 +1,8 @@
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using FreedomITAS.Data;
 using FreedomITAS.Models;
+using FreedomITAS.Services;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using System.Threading.Tasks;
 
@@ -11,11 +12,13 @@ namespace FreedomITAS.Pages.Clients
     {
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
+        private readonly ClientUpdateService _clientUpdateService;
 
-        public ClientEditModel(AppDbContext context, RouteProtector protector)
+        public ClientEditModel(AppDbContext context, RouteProtector protector, ClientUpdateService clientUpdateService)
         {
             _context = context;
             _protector = protector;
+            _clientUpdateService = clientUpdateService;
         }
 
         [BindProperty]
@@ -71,8 +74,25 @@ namespace FreedomITAS.Pages.Clients
             clientToUpdate.ContactLastName = Client.ContactLastName;
             clientToUpdate.ContactEmail = Client.ContactEmail;
             clientToUpdate.ContactMobile = Client.ContactMobile;
-
+            _context.Entry(clientToUpdate).CurrentValues.SetValues(Client);
             await _context.SaveChangesAsync();
+
+            // Decide which systems to update based on which IDs exist
+            var systemsToUpdate = new List<string>();
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HaloId)) systemsToUpdate.Add("HaloPSA");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HuduId)) systemsToUpdate.Add("Hudu");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.SyncroId)) systemsToUpdate.Add("Syncro");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.DreamScapeId)) systemsToUpdate.Add("Dreamscape");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.Pax8Id)) systemsToUpdate.Add("Pax8");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.ZomentumId)) systemsToUpdate.Add("Zomentum");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HighLevelId)) systemsToUpdate.Add("HighLevel");
+
+            // Push updates
+            var results = await _clientUpdateService.UpdateClientAsync(clientToUpdate, systemsToUpdate);
+
+            // Surface results to UI
+            foreach (var kv in results) TempData[$"{kv.Key}Update"] = kv.Value;
+
             return RedirectToPage("/Index");
         }
     }

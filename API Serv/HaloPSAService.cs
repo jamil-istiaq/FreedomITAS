@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
 
 namespace FreedomITAS
@@ -50,6 +51,20 @@ namespace FreedomITAS
             content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
             
             return await client.PostAsync($"{_settings.ApiBaseUrl}client", content);            
+        }
+
+        public async Task<HttpResponseMessage> UpdateClientAsync(string clientId, object payload)
+        {
+            var token = await GetAccessTokenAsync();
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
+           
+            var url = $"{_settings.ApiBaseUrl}client/{clientId}";
+            var request = new HttpRequestMessage(HttpMethod.Put, url) { Content = content };
+            return await client.SendAsync(request);
         }
 
 
