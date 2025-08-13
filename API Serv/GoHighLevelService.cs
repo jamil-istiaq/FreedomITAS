@@ -1,7 +1,9 @@
 ﻿using FreedomITAS.API_Settings;
 using Microsoft.Extensions.Options;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 namespace FreedomITAS.API_Serv
 {
     public class GoHighLevelService
@@ -104,6 +106,45 @@ namespace FreedomITAS.API_Serv
 
             await _tokenStorage.SaveTokensAsync(accessToken!, refreshToken!, expiresIn);
         }
+
+        public async Task<HttpResponseMessage> UpdateContactAsync(string contactId, object payload)
+        {
+            if (string.IsNullOrWhiteSpace(contactId))
+                throw new ArgumentException("contactId is required.", nameof(contactId));
+
+            var token = await GetAccessTokenAsync();
+            var client = _httpClientFactory.CreateClient();
+
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Remove("Version");
+            client.DefaultRequestHeaders.Add("Version", "2021-07-28");
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+            });
+
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var url = $"{_settings.ApiBaseUrl.TrimEnd('/')}/contacts/{contactId}";
+
+            var req = new HttpRequestMessage(HttpMethod.Put, url) { Content = content };
+            return await client.SendAsync(req);
+        }
+
+        public async Task<HttpResponseMessage> DeleteContactAsync(string contactId)
+        {
+            var token = await GetAccessTokenAsync();
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            client.DefaultRequestHeaders.Remove("Version");
+            client.DefaultRequestHeaders.Add("Version", "2021-07-28");
+
+            var url = $"{_settings.ApiBaseUrl.TrimEnd('/')}/contacts/{contactId}";
+            return await client.DeleteAsync(url);
+        }
+
 
 
     }

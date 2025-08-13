@@ -95,5 +95,6 @@ namespace FreedomITAS.Pages.Clients
 
             return RedirectToPage("/Index");
         }
+
     }
 }

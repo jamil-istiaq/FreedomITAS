@@ -38,5 +38,19 @@ namespace FreedomITAS.API_Serv
             var req = new HttpRequestMessage(HttpMethod.Put, $"{_settings.ApiBaseUrl}/customers/{id}") { Content = content };
             return await client.SendAsync(req);
         }
+
+        public async Task<HttpResponseMessage> DeleteCustomerOrContactAsync(string id)
+        {
+            var client = _httpClientFactory.CreateClient();
+
+            // Try contact
+            var resp = await client.DeleteAsync($"{_settings.ApiBaseUrl.TrimEnd('/')}/contacts/{id}");
+            if (resp.IsSuccessStatusCode || resp.StatusCode == System.Net.HttpStatusCode.NotFound)
+                return resp;
+
+            // Fallback to customer
+            return await client.DeleteAsync($"{_settings.ApiBaseUrl.TrimEnd('/')}/customers/{id}");
+        }
+
     }
 }

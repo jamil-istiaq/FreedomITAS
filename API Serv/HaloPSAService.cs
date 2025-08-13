@@ -67,6 +67,19 @@ namespace FreedomITAS
             return await client.SendAsync(request);
         }
 
+        public async Task<HttpResponseMessage> DeleteCompanyAsync(string clientId)
+        {
+            var token = await GetAccessTokenAsync();
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            // Adjust path if your instance uses plural (e.g., /clients/{id})
+            var url = $"{_settings.ApiBaseUrl.TrimEnd('/')}/client/{clientId}";
+            return await client.DeleteAsync(url);
+        }
+
+
 
     }
 }

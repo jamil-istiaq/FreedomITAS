@@ -36,13 +36,7 @@ namespace FreedomITAS.Services
             _highLevelService = highLevelService;
             _dbContext = dbContext;
         }
-
-        //private async Task<string> ExtractIdFromResponse(HttpResponseMessage response)
-        //{
-        //    var json = await response.Content.ReadAsStringAsync();
-        //    using var doc = JsonDocument.Parse(json);
-        //    return doc.RootElement.GetProperty("id").GetInt32().ToString();
-        //}
+       
         private async Task<string> ExtractIdFromResponse(HttpResponseMessage response)
         {
             var json = await response.Content.ReadAsStringAsync();
@@ -142,6 +136,7 @@ namespace FreedomITAS.Services
                         },
                         override_org_phone= client.CompanyPhone,
                         override_org_website= client.Website,
+                        override_org_email=client.ContactEmail,
                         newclient_contactname= $"{client.ContactFirstName} {client.ContactMiddleName} {client.ContactLastName}".Trim(),
                         newclient_contactemail =client.ContactEmail
                     }

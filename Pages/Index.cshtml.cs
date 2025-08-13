@@ -17,6 +17,10 @@ namespace FreedomITAS.Pages
         private readonly ClientCreateService _clientCreateService;
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
+        private readonly ClientDeleteService _deleteService;
+        private readonly ClientUpdateService _clientUpdateService;
+        private readonly ClientDeleteService _clientDeleteService;
+
 
         [BindProperty]
         public List<string> SelectedSource { get; set; }
@@ -31,11 +35,13 @@ namespace FreedomITAS.Pages
         public IList<ClientModel> Clients { get; set; }
         public Dictionary<string, string> EncryptedIds { get; set; }
 
-        public IndexModel(AppDbContext context, RouteProtector protector, ClientCreateService clientCreateService)
+        public IndexModel(AppDbContext context, RouteProtector protector, ClientCreateService clientCreateService, ClientUpdateService clientUpdateService, ClientDeleteService clientDeleteService )
         {
             _context = context;
             _protector = protector;
             _clientCreateService = clientCreateService;
+            _clientUpdateService = clientUpdateService;
+            _clientDeleteService = clientDeleteService;
         }
 
 
@@ -44,11 +50,39 @@ namespace FreedomITAS.Pages
             Clients = await _context.Clients.ToListAsync();
             EncryptedIds = Clients.ToDictionary(c => c.ClientId, c => _protector.Protect(c.ClientId));
         }
-
-        public IActionResult OnPostSave()
+       
+        public async Task<IActionResult> OnPostAsync()
         {
+            if (!ModelState.IsValid)
+                return Page();
+
+            var clientToUpdate = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == EditedClient.ClientId);
+            if (clientToUpdate == null) return NotFound();
+
+            _context.Entry(clientToUpdate).CurrentValues.SetValues(EditedClient);
+            await _context.SaveChangesAsync();
+
+            // choose platforms: by presence of IDs (edit pushes only to systems where the client already exists)
+            var systemsToUpdate = new List<string>();
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HaloId)) systemsToUpdate.Add("HaloPSA");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HuduId)) systemsToUpdate.Add("Hudu");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.SyncroId)) systemsToUpdate.Add("Syncro");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.DreamScapeId)) systemsToUpdate.Add("Dreamscape");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.Pax8Id)) systemsToUpdate.Add("Pax8");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.ZomentumId)) systemsToUpdate.Add("Zomentum");
+            if (!string.IsNullOrWhiteSpace(clientToUpdate.HighLevelId)) systemsToUpdate.Add("HighLevel");
+
+            // (optional) if you want to respect checkboxes from UI instead, use SelectedSource when provided:
+            if (SelectedSource != null && SelectedSource.Any())
+                systemsToUpdate = SelectedSource;
+
+            var updateResults = await _clientUpdateService.UpdateClientAsync(clientToUpdate, systemsToUpdate);
+            foreach (var kv in updateResults)
+                TempData[$"Update_{kv.Key}"] = kv.Value;
+
             TempData["Message"] = "Client updated successfully!";
-            return RedirectToPage();
+            
+            return RedirectToPage("/Index");
         }
 
         public async Task<IActionResult> OnPostDeleteAsync(string id)
@@ -70,6 +104,11 @@ namespace FreedomITAS.Pages
             var client = await _context.Clients.FirstOrDefaultAsync(c => c.ClientId == clientId);
             if (client == null)
                 return NotFound();
+
+            var results = await _deleteService.DeleteClientAsync(client);
+
+            foreach (var kv in results)
+                TempData[$"Delete_{kv.Key}"] = kv.Value;
 
             _context.Clients.Remove(client);
             await _context.SaveChangesAsync();

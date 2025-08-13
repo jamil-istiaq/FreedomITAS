@@ -1,14 +1,9 @@
 ﻿using FreedomITAS.API_Settings;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json.Linq;
-using System;
-using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Runtime;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 namespace FreedomITAS.API_Serv
 {
     public class DreamscapeService
@@ -16,6 +11,11 @@ namespace FreedomITAS.API_Serv
         private readonly IHttpClientFactory _httpClientFactory;        
         private readonly string _apiKey;
         private readonly string _apiBaseUrl;
+
+        private static readonly JsonSerializerOptions _jsonOptions = new()
+        {
+            DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+        };
 
         public DreamscapeService(IHttpClientFactory httpClientFactory, IOptions<DreamscapeSettings> settings)
         {
@@ -59,5 +59,44 @@ namespace FreedomITAS.API_Serv
             byte[] hashBytes = md5.ComputeHash(inputBytes);
             return BitConverter.ToString(hashBytes).Replace("-", "").ToLowerInvariant();
         }
+
+        public async Task<HttpResponseMessage> UpdateCompanyAsync(string customerId, object payload)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var request = BuildSignedRequest(new HttpMethod("PATCH"), $"customers/{customerId}", payload);
+            return await client.SendAsync(request);
+        }
+
+        private HttpRequestMessage BuildSignedRequest(HttpMethod method, string relativePath, object? body)
+        {
+            
+            string guid = Guid.NewGuid().ToString();
+            long tsMs = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            string requestId = GenerateMd5(guid + tsMs);
+            string signature = GenerateMd5(requestId + _apiKey);
+
+            var url = $"{_apiBaseUrl.TrimEnd('/')}/{relativePath.TrimStart('/')}";
+
+            var req = new HttpRequestMessage(method, url);
+            req.Headers.Add("api-request-id", requestId);
+            req.Headers.Add("api-signature", signature);
+            req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            if (body is not null)
+            {
+                var json = JsonSerializer.Serialize(body, _jsonOptions);
+                req.Content = new StringContent(json, Encoding.UTF8, "application/json");
+            }
+
+            return req;
+        }
+
+        public async Task<HttpResponseMessage> DeleteCompanyAsync(string customerId)
+        {
+            var client = _httpClientFactory.CreateClient();
+            var request = BuildSignedRequest(HttpMethod.Delete, $"customers/{customerId}", null); // reuse your BuildSignedRequest helper
+            return await client.SendAsync(request);
+        }
+
     }
 }

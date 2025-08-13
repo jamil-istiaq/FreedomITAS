@@ -79,6 +79,63 @@ namespace FreedomITAS.API_Serv
            
         }
 
+        private async Task<HttpResponseMessage> PutToZomentumAsync(string companyId, object payload, string token)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var json = JsonSerializer.Serialize(payload, new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+            });
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            return await client.PutAsync($"{_settings.ApiBaseUrl.TrimEnd('/')}/client/companies/{companyId}", content);
+        }
+
+        public async Task<HttpResponseMessage> UpdateClientAsync(string companyId, object payload)
+        {
+            if (string.IsNullOrWhiteSpace(companyId))
+                throw new ArgumentException("Zomentum companyId is required.", nameof(companyId));
+
+            var token = _settings.AccessToken;
+            var response = await PutToZomentumAsync(companyId, payload, token);
+
+            // Refresh token on 401 and retry once (same as your Create)
+            if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                var newAccessToken = await RefreshAccessTokenAsync(); // your existing method
+                _settings.AccessToken = newAccessToken;
+                response = await PutToZomentumAsync(companyId, payload, newAccessToken);
+            }
+
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> DeleteClientAsync(string companyId)
+        {
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _settings.AccessToken);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+
+            var url = $"{_settings.ApiBaseUrl.TrimEnd('/')}/client/companies/{companyId}";
+            var resp = await client.DeleteAsync(url);
+
+            if (resp.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+            {
+                var newAccessToken = await RefreshAccessTokenAsync();
+                _settings.AccessToken = newAccessToken;
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", newAccessToken);
+                resp = await client.DeleteAsync(url);
+            }
+
+            return resp;
+        }
+
+
+
+
     }
 }
 
