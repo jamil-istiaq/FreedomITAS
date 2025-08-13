@@ -18,8 +18,7 @@ namespace FreedomITAS.Pages
         private readonly AppDbContext _context;
         private readonly RouteProtector _protector;
         private readonly ClientDeleteService _deleteService;
-        private readonly ClientUpdateService _clientUpdateService;
-        private readonly ClientDeleteService _clientDeleteService;
+        private readonly ClientUpdateService _clientUpdateService;        
 
 
         [BindProperty]
@@ -35,13 +34,12 @@ namespace FreedomITAS.Pages
         public IList<ClientModel> Clients { get; set; }
         public Dictionary<string, string> EncryptedIds { get; set; }
 
-        public IndexModel(AppDbContext context, RouteProtector protector, ClientCreateService clientCreateService, ClientUpdateService clientUpdateService, ClientDeleteService clientDeleteService )
+        public IndexModel(AppDbContext context, RouteProtector protector, ClientCreateService clientCreateService, ClientUpdateService clientUpdateService)
         {
             _context = context;
             _protector = protector;
             _clientCreateService = clientCreateService;
-            _clientUpdateService = clientUpdateService;
-            _clientDeleteService = clientDeleteService;
+            _clientUpdateService = clientUpdateService;            
         }
 
 

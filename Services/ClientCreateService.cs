@@ -272,6 +272,19 @@ namespace FreedomITAS.Services
                             orderApprovalRequired = true
                         };
                         var pax8Response = await _pax8Service.CreateClientAsync(pax8Payload);
+                        var pax8CompanyId = await ExtractIdFromResponse(pax8Response);
+                        client.Pax8Id = pax8CompanyId;
+                        await _dbContext.SaveChangesAsync();
+
+                        var adminContactPayload = new
+                        {
+                            firstName = client.ContactFirstName,
+                            lastName = $"{client.ContactMiddleName} {client.ContactLastName}".Trim(),
+                            email = client.ContactEmail,
+                            phone = client.CompanyPhone,
+                            types = new[] { new { type = "Admin", primary = true } }
+                        };
+
                         results["Pax8"] = await pax8Response.Content.ReadAsStringAsync();
                         var resultJson = await pax8Response.Content.ReadAsStringAsync();
                         Console.WriteLine("Pax8 API Create Response:\n" + resultJson);

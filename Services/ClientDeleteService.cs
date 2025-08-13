@@ -25,6 +25,20 @@ namespace FreedomITAS.Services
             _goHighLevelService = goHighLevelService;
         }
 
+        public async Task<Dictionary<string, string>> DeleteClientAsync(ClientModel client)
+        {
+            var systems = new List<string>();
+            if (!string.IsNullOrWhiteSpace(client.HuduId)) systems.Add("Hudu");
+            if (!string.IsNullOrWhiteSpace(client.HaloId)) systems.Add("HaloPSA");
+            if (!string.IsNullOrWhiteSpace(client.SyncroId)) systems.Add("Syncro");
+            if (!string.IsNullOrWhiteSpace(client.DreamScapeId)) systems.Add("Dreamscape");
+            if (!string.IsNullOrWhiteSpace(client.Pax8Id)) systems.Add("Pax8");
+            if (!string.IsNullOrWhiteSpace(client.ZomentumId)) systems.Add("Zomentum");
+            if (!string.IsNullOrWhiteSpace(client.HighLevelId)) systems.Add("HighLevel");
+
+            return await DeleteClientAsync(client, systems);
+        }
+
         public async Task<Dictionary<string, string>> DeleteClientAsync(ClientModel client, List<string> systems)
         {
             var results = new Dictionary<string, string>();
